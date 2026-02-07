@@ -23,6 +23,7 @@ const els = {
   undoBtn: document.getElementById('undoBtn'),
   sessionInfo: document.getElementById('sessionInfo'),
   queueInfo: document.getElementById('queueInfo'),
+  modeInfo: document.getElementById('modeInfo'),
   fileInput: document.getElementById('fileInput'),
   importBtn: document.getElementById('importBtn'),
   importStatus: document.getElementById('importStatus'),
@@ -270,6 +271,25 @@ function resetQueue() {
   showingBack = false;
 }
 
+
+function getCurrentModeLabel() {
+  if (state.simpleMode) return 'シンプル';
+  if (state.oniMode) return '鬼モード';
+  return '通常';
+}
+
+function syncActionDock() {
+  const simple = !!state.simpleMode;
+  els.actionDock.classList.toggle('simple-only', simple);
+  els.controlsRow.classList.toggle('hidden', simple);
+  els.ratingRow.classList.toggle('hidden', simple);
+  els.simpleRatingRow.classList.toggle('hidden', !simple);
+  // force display to avoid stale/cached CSS states on some environments
+  els.controlsRow.style.display = simple ? 'none' : '';
+  els.ratingRow.style.display = simple ? 'none' : '';
+  els.simpleRatingRow.style.display = simple ? 'grid' : 'none';
+}
+
 function renderAll() {
   renderCard();
   renderDeck();
@@ -277,10 +297,8 @@ function renderAll() {
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
   syncModeToggles();
-  els.actionDock.classList.toggle('simple-only', state.simpleMode);
-  els.controlsRow.classList.toggle('hidden', state.simpleMode);
-  els.ratingRow.classList.toggle('hidden', state.simpleMode);
-  els.simpleRatingRow.classList.toggle('hidden', !state.simpleMode);
+  syncActionDock();
+  els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
   els.columnsList.innerHTML = state.files.map(f => `<p>${escapeHtml(f.name)}: ${escapeHtml(f.columns.join(' / '))}</p>`).join('') || '<p>未インポート</p>';
 }
 
@@ -298,6 +316,7 @@ function renderCard() {
     els.back.innerHTML = '<div class="detail">新しい単語をインポートするか、期限到来を待ってください。</div>';
     els.sessionInfo.textContent = `総カード: ${state.cards.length}`;
     els.queueInfo.textContent = 'キュー: 0';
+    els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
     els.oniBox.classList.add('hidden');
     return;
   }
@@ -322,6 +341,7 @@ function renderCard() {
   }
   els.sessionInfo.textContent = `No.${c.no} / ${c.source}`;
   els.queueInfo.textContent = `キュー残: ${Math.max(0, currentQueue.length - currentIndex)}`;
+  els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
   els.oniBox.classList.toggle('hidden', !state.oniMode || !showingBack || state.simpleMode);
   els.oniResult.textContent = '';
   els.oniInput.value = '';
