@@ -93,6 +93,37 @@ body::before {
 .side-menu h2 { margin: 6px 2px 16px; letter-spacing: .02em; }
 .side-menu button { display: block; width: 100%; margin: 10px 0; text-align: left; }
 
+.side-menu::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 80% 8%, rgba(132, 176, 255, .18), transparent 35%);
+}
+
+.side-menu button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+
+.side-menu button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 62%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+  transition: left .45s ease;
+}
+
+.side-menu button:hover::after { left: 130%; }
+
+#normalModeMenuBtn { border-color: rgba(122, 198, 255, .45); }
+#simpleModeMenuBtn { border-color: rgba(125, 226, 171, .45); }
+#oniModeMenuBtn { border-color: rgba(245, 127, 150, .45); }
+
 .main {
   width: 100%;
   max-width: 1320px;
@@ -120,6 +151,11 @@ body::before {
   margin: 0;
   font-size: clamp(1.1rem, 2.1vw, 2rem);
   letter-spacing: .01em;
+  background: linear-gradient(92deg, #f5f9ff, #b8d1ff 42%, #d4c0ff 78%, #f6f9ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 26px rgba(149, 188, 255, .25);
 }
 
 .menu-btn {
@@ -167,7 +203,13 @@ body::before {
   letter-spacing: .04em;
   text-transform: uppercase;
   padding: 4px 12px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 0 18px rgba(136, 171, 255, .25);
+  animation: pulsePill 2.6s ease-in-out infinite;
+}
+
+@keyframes pulsePill {
+  0%,100% { transform: translateY(0); filter: brightness(1); }
+  50% { transform: translateY(-1px); filter: brightness(1.12); }
 }
 
 .card {
@@ -225,6 +267,13 @@ body::before {
   color: var(--text);
   line-height: 1.65;
   font-size: clamp(1.05rem, 2.5vw, 1.26rem);
+  transition: border-color .2s ease, transform .2s ease, background .2s ease;
+}
+
+.card-back .detail:hover {
+  border-color: rgba(144, 184, 255, .4);
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.06);
 }
 
 .card-back .label {
@@ -258,8 +307,23 @@ body::before {
   border: 1px solid var(--line);
   background: var(--panel);
   backdrop-filter: blur(16px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(255,255,255,.05);
   padding: 10px;
+  position: relative;
+}
+
+.action-dock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255,255,255,.08), transparent 28%, transparent 72%, rgba(255,255,255,.08));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  padding: 1px;
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
 }
 
 .simple-rating-row { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }

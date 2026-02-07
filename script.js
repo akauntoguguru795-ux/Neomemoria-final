@@ -75,41 +75,39 @@ function loadState() {
 }
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
+function getPracticeMode() {
+  if (state.simpleMode) return 'simple';
+  if (state.oniMode) return 'oni';
+  return 'normal';
+}
+
+function setPracticeMode(mode) {
+  state.simpleMode = mode === 'simple';
+  state.oniMode = mode === 'oni';
+  saveState();
+  syncModeToggles();
+  switchView('flashcards');
+  resetQueue();
+  renderAll();
+}
+
 function wire() {
   els.menuBtn.onclick = toggleMenu;
   els.menuBackdrop.onclick = closeMenu;
   els.sideMenu.querySelectorAll('button').forEach(btn => {
     btn.onclick = () => {
       if (btn.dataset.action === 'simple-mode') {
-        state.simpleMode = true;
-        state.oniMode = false;
-        saveState();
-        syncModeToggles();
-        switchView('flashcards');
-        resetQueue();
-        renderAll();
+        setPracticeMode('simple');
         closeMenu();
         return;
       }
       if (btn.dataset.action === 'normal-mode') {
-        state.simpleMode = false;
-        state.oniMode = false;
-        saveState();
-        syncModeToggles();
-        switchView('flashcards');
-        resetQueue();
-        renderAll();
+        setPracticeMode('normal');
         closeMenu();
         return;
       }
       if (btn.dataset.action === 'oni-mode') {
-        state.simpleMode = false;
-        state.oniMode = true;
-        saveState();
-        syncModeToggles();
-        switchView('flashcards');
-        resetQueue();
-        renderAll();
+        setPracticeMode('oni');
         closeMenu();
         return;
       }
@@ -180,19 +178,15 @@ function wire() {
   };
 
   els.oniToggle.onchange = () => {
-    state.oniMode = els.oniToggle.checked;
-    if (state.oniMode) state.simpleMode = false;
-    saveState();
-    syncModeToggles();
-    renderCard();
+    if (els.oniToggle.checked) setPracticeMode('oni');
+    else if (els.simpleModeToggle.checked) setPracticeMode('simple');
+    else setPracticeMode('normal');
   };
 
   els.simpleModeToggle.onchange = () => {
-    state.simpleMode = els.simpleModeToggle.checked;
-    if (state.simpleMode) state.oniMode = false;
-    saveState();
-    syncModeToggles();
-    renderAll();
+    if (els.simpleModeToggle.checked) setPracticeMode('simple');
+    else if (els.oniToggle.checked) setPracticeMode('oni');
+    else setPracticeMode('normal');
   };
 
   document.querySelectorAll('[data-simple-rating]').forEach(btn => {
@@ -295,9 +289,10 @@ function resetQueue() {
 
 
 function getCurrentModeLabel() {
-  if (state.simpleMode) return 'シンプル';
-  if (state.oniMode) return '鬼モード';
-  return '通常';
+  const mode = getPracticeMode();
+  if (mode === 'simple') return 'シンプルフラッシュカード';
+  if (mode === 'oni') return '鬼モード';
+  return 'ノーマルフラッシュカード';
 }
 
 function syncActionDock() {
@@ -342,29 +337,32 @@ function renderCard() {
     els.oniBox.classList.add('hidden');
     return;
   }
-  const isSimple = !!state.simpleMode;
-  const prompt = state.oniMode ? `${c.meaning} ${c.emoji || ''}` : `${c.word} ${c.emoji || ''}`;
-  const main = state.oniMode ? c.word : c.meaning;
-  const mainLabel = state.oniMode ? '英単語' : '意味';
+  const mode = getPracticeMode();
 
-  els.front.textContent = prompt;
-  if (isSimple) {
+  if (mode === 'simple') {
+    els.front.textContent = `${c.word} ${c.emoji || ''}`;
     els.back.innerHTML = showingBack
       ? `<div class="meaning"><span class="label">意味</span>${escapeHtml(c.meaning || '-')}</div>`
       : '<div class="detail">...</div>';
+  } else if (mode === 'oni') {
+    els.front.textContent = `${c.meaning} ${c.emoji || ''}`;
+    els.back.innerHTML = showingBack
+      ? `<div class="meaning"><span class="label">英単語</span>${escapeHtml(c.word || '-')}</div>`
+      : '<div class="detail">...</div>';
   } else {
+    els.front.textContent = `No.${escapeHtml(c.no)}  ${c.word} ${c.emoji || ''}`;
     els.back.innerHTML = showingBack
       ? `
-        <div class="meaning"><span class="label">${mainLabel}</span>${escapeHtml(main || '-')}</div>
         <div class="detail"><span class="label">例文</span>${escapeHtml(c.example || '-')}</div>
         <div class="detail"><span class="label">例文の和訳</span>${escapeHtml(c.exampleJa || '-')}</div>
+        <div class="detail"><span class="label">絵文字</span>${escapeHtml(c.emoji || '-')}</div>
       `
       : '<div class="detail">...</div>';
   }
   els.sessionInfo.textContent = `No.${c.no} / ${c.source}`;
   els.queueInfo.textContent = `キュー残: ${Math.max(0, currentQueue.length - currentIndex)}`;
   els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
-  els.oniBox.classList.toggle('hidden', !state.oniMode || !showingBack || state.simpleMode);
+  els.oniBox.classList.toggle('hidden', getPracticeMode() !== 'oni' || !showingBack);
   els.oniResult.textContent = '';
   els.oniInput.value = '';
 }
