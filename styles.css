@@ -20,6 +20,7 @@
 body {
   margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--bg); color: var(--text);
+  line-height: 1.5;
 }
 .app-shell { display: flex; min-height: 100vh; }
 .menu-backdrop {
@@ -44,20 +45,69 @@ body {
 .side-menu.open { transform: translateX(0); }
 .side-menu button { display: block; width: 100%; margin: 10px 0; }
 .main { width: 100%; padding: 12px; max-width: 1024px; margin: 0 auto; }
-.topbar { display: flex; align-items: center; gap: 12px; justify-content: space-between; }
+.topbar {
+  display: flex; align-items: center; gap: 12px; justify-content: space-between;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  padding: 10px 12px;
+  border: 1px solid #ffffff1f;
+  border-radius: 14px;
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  backdrop-filter: blur(6px);
+}
 .topbar h1 { font-size: clamp(1rem, 2vw, 1.4rem); margin: 0; }
 .menu-btn { font-size: 1.1rem; width: 44px; height: 44px; }
 .streak-badge { color: var(--muted); font-weight: 600; }
 .view { display: none; }
-.view.active { display: block; }
+.view.active { display: block; margin-top: 14px; }
 .card-panel { display: grid; gap: 12px; }
-.card {
-  background: linear-gradient(155deg, var(--panel), #0000);
-  border: 1px solid #ffffff22; border-radius: 18px; min-height: 250px; color: var(--text);
-  padding: 16px; text-align: left;
+.mode-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: .92rem;
+  background: var(--panel);
+  border: 1px solid #ffffff18;
+  border-radius: 12px;
+  padding: 8px 12px;
 }
-.card-front { font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 700; }
-.card-back { margin-top: 14px; color: var(--muted); white-space: pre-wrap; }
+.card {
+  background: linear-gradient(155deg, color-mix(in srgb, var(--panel) 92%, transparent), #0000);
+  border: 1px solid #ffffff22; border-radius: 18px; min-height: 280px; color: var(--text);
+  padding: 18px; text-align: left;
+  box-shadow: 0 12px 30px #00000024;
+}
+.card-front {
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.card-back {
+  margin-top: 16px;
+  color: var(--muted);
+  display: grid;
+  gap: 10px;
+}
+.card-back .meaning {
+  font-size: 1.15rem;
+  color: var(--text);
+  font-weight: 600;
+}
+.card-back .detail {
+  background: color-mix(in srgb, var(--panel) 82%, transparent);
+  border: 1px solid #ffffff18;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.card-back .label {
+  display: block;
+  font-size: .78rem;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.tap-hint { color: var(--muted); margin-top: 12px; display: inline-block; }
 .oni-box { background: var(--panel); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
 .hidden { display: none; }
 button, select, input {
@@ -65,7 +115,7 @@ button, select, input {
   border-radius: 10px; padding: 10px 12px;
 }
 button { cursor: pointer; }
-button:hover { border-color: var(--accent); }
+button:hover { border-color: var(--accent); transform: translateY(-1px); }
 .controls-row, .rating-row { display: grid; gap: 8px; grid-template-columns: repeat(2,minmax(0,1fr)); }
 .rating-row button:nth-child(1) { border-color: var(--ok); }
 .rating-row button:nth-child(4) { border-color: var(--danger); }
@@ -81,4 +131,6 @@ th, td { border-bottom: 1px solid #ffffff22; padding: 8px; text-align: left; }
 @media (max-width: 768px) {
   .main { padding: 10px; }
   .rating-row { grid-template-columns: 1fr; }
+  .mode-row { flex-direction: column; gap: 2px; }
+  .topbar { position: static; }
 }

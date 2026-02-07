@@ -252,19 +252,24 @@ function renderCard() {
   const c = getCurrentCard();
   if (!c) {
     els.front.textContent = '本日の出題はありません';
-    els.back.textContent = '新しい単語をインポートするか、期限到来を待ってください。';
+    els.back.innerHTML = '<div class="detail">新しい単語をインポートするか、期限到来を待ってください。</div>';
     els.sessionInfo.textContent = `総カード: ${state.cards.length}`;
     els.queueInfo.textContent = 'キュー: 0';
     els.oniBox.classList.add('hidden');
     return;
   }
   const prompt = state.oniMode ? `${c.meaning} ${c.emoji || ''}` : `${c.word} ${c.emoji || ''}`;
-  const answer = state.oniMode
-    ? `${c.word}\n意味: ${c.meaning}\n例文: ${c.example || '-'}\n和訳: ${c.exampleJa || '-'}`
-    : `${c.meaning}\n例文: ${c.example || '-'}\n和訳: ${c.exampleJa || '-'}`;
+  const main = state.oniMode ? c.word : c.meaning;
+  const mainLabel = state.oniMode ? '英単語' : '意味';
 
   els.front.textContent = prompt;
-  els.back.textContent = showingBack ? answer : '...';
+  els.back.innerHTML = showingBack
+    ? `
+      <div class="meaning"><span class="label">${mainLabel}</span>${escapeHtml(main || '-')}</div>
+      <div class="detail"><span class="label">例文</span>${escapeHtml(c.example || '-')}</div>
+      <div class="detail"><span class="label">例文の和訳</span>${escapeHtml(c.exampleJa || '-')}</div>
+    `
+    : '<div class="detail">...</div>';
   els.sessionInfo.textContent = `No.${c.no} / ${c.source}`;
   els.queueInfo.textContent = `キュー残: ${Math.max(0, currentQueue.length - currentIndex)}`;
   els.oniBox.classList.toggle('hidden', !state.oniMode || !showingBack);
