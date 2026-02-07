@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Neomemoria Flashcards</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="sideMenu" class="side-menu" aria-hidden="true">
+      <h2>Neomemoria</h2>
+      <button data-view="flashcards">フラッシュカード</button>
+      <button data-view="import">インポート</button>
+      <button data-view="deck">単語帳一覧</button>
+      <button data-view="stats">統計情報</button>
+      <button data-view="settings">設定</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuBtn" class="menu-btn" aria-label="menu">☰</button>
+        <h1>Neomemoria Flashcards</h1>
+        <div id="streakBadge" class="streak-badge">連続学習: 0日</div>
+      </header>
+
+      <section id="flashcards" class="view active">
+        <div class="card-panel">
+          <div class="mode-row">
+            <span id="sessionInfo"></span>
+            <span id="queueInfo"></span>
+          </div>
+          <button id="card" class="card" type="button">
+            <div class="card-front"></div>
+            <div class="card-back"></div>
+            <small>タップしてめくる</small>
+          </button>
+          <div id="oniModeBox" class="oni-box hidden">
+            <label for="oniInput">鬼モード回答（英語スペル）</label>
+            <input id="oniInput" type="text" placeholder="type answer" />
+            <button id="oniCheckBtn" type="button">答え合わせ</button>
+            <p id="oniResult"></p>
+          </div>
+
+          <div class="controls-row">
+            <button id="undoBtn" class="secondary">戻る</button>
+            <button id="modeBtn" class="secondary">出題: 初回ランダム</button>
+          </div>
+
+          <div class="rating-row">
+            <button data-rating="mastered">完全に覚えた</button>
+            <button data-rating="normal">普通</button>
+            <button data-rating="unsure">自信なし</button>
+            <button data-rating="forgot">完全に忘れた</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="import" class="view">
+        <h2>CSV / テキスト インポート</h2>
+        <p>1ファイル上限: 3000語（ファイル数無制限）</p>
+        <input id="fileInput" type="file" accept=".csv,.txt" multiple />
+        <button id="importBtn" type="button">インポート実行</button>
+        <p id="importStatus"></p>
+        <h3>検出カラム一覧</h3>
+        <div id="columnsList" class="card-list"></div>
+      </section>
+
+      <section id="deck" class="view">
+        <h2>単語帳一覧（全カード）</h2>
+        <div id="deckTableWrap" class="table-wrap"></div>
+      </section>
+
+      <section id="stats" class="view">
+        <h2>統計情報</h2>
+        <div class="stats-grid">
+          <article><h3>正答率</h3><p id="accuracyStat">0%</p></article>
+          <article><h3>学習日数</h3><p id="studyDaysStat">0日</p></article>
+          <article><h3>学習時間</h3><p id="studyTimeStat">0分</p></article>
+          <article><h3>習熟度分布</h3><p id="distributionStat">-</p></article>
+        </div>
+        <h3>週次グラフ</h3>
+        <div id="weeklyGraph" class="weekly-graph"></div>
+      </section>
+
+      <section id="settings" class="view">
+        <h2>設定</h2>
+        <label class="setting-item">
+          <span>テーマ</span>
+          <select id="themeSelect">
+            <option value="dark">ダーク（くすみ）</option>
+            <option value="light">ホワイト</option>
+          </select>
+        </label>
+        <label class="setting-item">
+          <span>鬼モード（和訳→英単語スペル）</span>
+          <input id="oniModeToggle" type="checkbox" />
+        </label>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
