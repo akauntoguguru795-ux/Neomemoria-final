@@ -127,6 +127,15 @@ button, select, input {
 button { cursor: pointer; }
 button:hover { border-color: var(--accent); transform: translateY(-1px); }
 .controls-row, .rating-row { display: grid; gap: 8px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+
+.action-dock.simple-only .controls-row,
+.action-dock.simple-only .rating-row {
+  display: none;
+}
+
+.action-dock.simple-only .simple-rating-row {
+  display: grid;
+}
 .rating-row button { font-weight: 600; }
 .rating-row button:nth-child(1) { border-color: var(--ok); }
 .rating-row button:nth-child(4) { border-color: var(--danger); }

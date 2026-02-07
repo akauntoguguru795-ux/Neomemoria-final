@@ -41,8 +41,10 @@ const els = {
   oniInput: document.getElementById('oniInput'),
   oniCheckBtn: document.getElementById('oniCheckBtn'),
   oniResult: document.getElementById('oniResult'),
+  actionDock: document.querySelector('.action-dock'),
   ratingRow: document.querySelector('.rating-row'),
-  simpleRatingRow: document.getElementById('simpleRatingRow')
+  simpleRatingRow: document.getElementById('simpleRatingRow'),
+  controlsRow: document.querySelector('.controls-row')
 };
 
 wire();
@@ -77,6 +79,17 @@ function wire() {
   els.menuBackdrop.onclick = closeMenu;
   els.sideMenu.querySelectorAll('button').forEach(btn => {
     btn.onclick = () => {
+      if (btn.dataset.action === 'simple-mode') {
+        state.simpleMode = true;
+        state.oniMode = false;
+        saveState();
+        syncModeToggles();
+        switchView('flashcards');
+        resetQueue();
+        renderAll();
+        closeMenu();
+        return;
+      }
       switchView(btn.dataset.view);
       closeMenu();
     };
@@ -264,6 +277,8 @@ function renderAll() {
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
   syncModeToggles();
+  els.actionDock.classList.toggle('simple-only', state.simpleMode);
+  els.controlsRow.classList.toggle('hidden', state.simpleMode);
   els.ratingRow.classList.toggle('hidden', state.simpleMode);
   els.simpleRatingRow.classList.toggle('hidden', !state.simpleMode);
   els.columnsList.innerHTML = state.files.map(f => `<p>${escapeHtml(f.name)}: ${escapeHtml(f.columns.join(' / '))}</p>`).join('') || '<p>未インポート</p>';
