@@ -36,10 +36,13 @@ const els = {
   weeklyGraph: document.getElementById('weeklyGraph'),
   themeSelect: document.getElementById('themeSelect'),
   oniToggle: document.getElementById('oniModeToggle'),
+  simpleModeToggle: document.getElementById('simpleModeToggle'),
   oniBox: document.getElementById('oniModeBox'),
   oniInput: document.getElementById('oniInput'),
   oniCheckBtn: document.getElementById('oniCheckBtn'),
-  oniResult: document.getElementById('oniResult')
+  oniResult: document.getElementById('oniResult'),
+  ratingRow: document.querySelector('.rating-row'),
+  simpleRatingRow: document.getElementById('simpleRatingRow')
 };
 
 wire();
@@ -56,6 +59,7 @@ function loadState() {
     mode: 'random',
     theme: 'dark',
     oniMode: false,
+    simpleMode: false,
     stats: {
       totalAnswers: 0,
       correctLike: 0,
@@ -141,9 +145,26 @@ function wire() {
 
   els.oniToggle.onchange = () => {
     state.oniMode = els.oniToggle.checked;
+    if (state.oniMode) state.simpleMode = false;
     saveState();
+    syncModeToggles();
     renderCard();
   };
+
+  els.simpleModeToggle.onchange = () => {
+    state.simpleMode = els.simpleModeToggle.checked;
+    if (state.simpleMode) state.oniMode = false;
+    saveState();
+    syncModeToggles();
+    renderAll();
+  };
+
+  document.querySelectorAll('[data-simple-rating]').forEach(btn => {
+    btn.onclick = () => {
+      const key = btn.dataset.simpleRating;
+      rateCard(key === 'ok' ? 'normal' : 'forgot');
+    };
+  });
 
   els.oniCheckBtn.onclick = () => {
     const c = getCurrentCard();
@@ -242,8 +263,15 @@ function renderAll() {
   renderStats();
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
-  els.oniToggle.checked = state.oniMode;
+  syncModeToggles();
+  els.ratingRow.classList.toggle('hidden', state.simpleMode);
+  els.simpleRatingRow.classList.toggle('hidden', !state.simpleMode);
   els.columnsList.innerHTML = state.files.map(f => `<p>${escapeHtml(f.name)}: ${escapeHtml(f.columns.join(' / '))}</p>`).join('') || '<p>未インポート</p>';
+}
+
+function syncModeToggles() {
+  els.oniToggle.checked = !!state.oniMode;
+  els.simpleModeToggle.checked = !!state.simpleMode;
 }
 
 function getCurrentCard() { return currentQueue[currentIndex] || null; }
@@ -258,21 +286,28 @@ function renderCard() {
     els.oniBox.classList.add('hidden');
     return;
   }
+  const isSimple = !!state.simpleMode;
   const prompt = state.oniMode ? `${c.meaning} ${c.emoji || ''}` : `${c.word} ${c.emoji || ''}`;
   const main = state.oniMode ? c.word : c.meaning;
   const mainLabel = state.oniMode ? '英単語' : '意味';
 
   els.front.textContent = prompt;
-  els.back.innerHTML = showingBack
-    ? `
-      <div class="meaning"><span class="label">${mainLabel}</span>${escapeHtml(main || '-')}</div>
-      <div class="detail"><span class="label">例文</span>${escapeHtml(c.example || '-')}</div>
-      <div class="detail"><span class="label">例文の和訳</span>${escapeHtml(c.exampleJa || '-')}</div>
-    `
-    : '<div class="detail">...</div>';
+  if (isSimple) {
+    els.back.innerHTML = showingBack
+      ? `<div class="meaning"><span class="label">意味</span>${escapeHtml(c.meaning || '-')}</div>`
+      : '<div class="detail">...</div>';
+  } else {
+    els.back.innerHTML = showingBack
+      ? `
+        <div class="meaning"><span class="label">${mainLabel}</span>${escapeHtml(main || '-')}</div>
+        <div class="detail"><span class="label">例文</span>${escapeHtml(c.example || '-')}</div>
+        <div class="detail"><span class="label">例文の和訳</span>${escapeHtml(c.exampleJa || '-')}</div>
+      `
+      : '<div class="detail">...</div>';
+  }
   els.sessionInfo.textContent = `No.${c.no} / ${c.source}`;
   els.queueInfo.textContent = `キュー残: ${Math.max(0, currentQueue.length - currentIndex)}`;
-  els.oniBox.classList.toggle('hidden', !state.oniMode || !showingBack);
+  els.oniBox.classList.toggle('hidden', !state.oniMode || !showingBack || state.simpleMode);
   els.oniResult.textContent = '';
   els.oniInput.value = '';
 }

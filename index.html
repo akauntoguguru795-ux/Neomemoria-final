@@ -49,6 +49,11 @@
               <button id="modeBtn" class="secondary">出題: 初回ランダム</button>
             </div>
 
+            <div id="simpleRatingRow" class="simple-rating-row hidden">
+              <button data-simple-rating="ok">⭕️ 覚えてた</button>
+              <button data-simple-rating="ng">❌ 覚えてない</button>
+            </div>
+
             <div class="rating-row">
               <button data-rating="mastered">完全に覚えた</button>
               <button data-rating="normal">普通</button>
@@ -98,6 +103,10 @@
         <label class="setting-item">
           <span>鬼モード（和訳→英単語スペル）</span>
           <input id="oniModeToggle" type="checkbox" />
+        </label>
+        <label class="setting-item">
+          <span>シンプルフラッシュカード（表:英単語 / 裏:意味）</span>
+          <input id="simpleModeToggle" type="checkbox" />
         </label>
       </section>
     </main>
