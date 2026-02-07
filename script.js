@@ -42,7 +42,8 @@ const els = {
   oniCheckBtn: document.getElementById('oniCheckBtn'),
   oniResult: document.getElementById('oniResult'),
   ratingRow: document.querySelector('.rating-row'),
-  simpleRatingRow: document.getElementById('simpleRatingRow')
+  simpleRatingRow: document.getElementById('simpleRatingRow'),
+  controlsRow: document.querySelector('.controls-row')
 };
 
 wire();
@@ -275,6 +276,7 @@ function renderAll() {
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
   syncModeToggles();
+  els.controlsRow.classList.toggle('hidden', state.simpleMode);
   els.ratingRow.classList.toggle('hidden', state.simpleMode);
   els.simpleRatingRow.classList.toggle('hidden', !state.simpleMode);
   els.columnsList.innerHTML = state.files.map(f => `<p>${escapeHtml(f.name)}: ${escapeHtml(f.columns.join(' / '))}</p>`).join('') || '<p>未インポート</p>';
