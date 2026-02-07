@@ -13,6 +13,7 @@ let sessionInterval;
 
 const els = {
   sideMenu: document.getElementById('sideMenu'),
+  menuBackdrop: document.getElementById('menuBackdrop'),
   menuBtn: document.getElementById('menuBtn'),
   views: [...document.querySelectorAll('.view')],
   card: document.getElementById('card'),
@@ -68,12 +69,17 @@ function loadState() {
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
 function wire() {
-  els.menuBtn.onclick = () => els.sideMenu.classList.toggle('open');
+  els.menuBtn.onclick = toggleMenu;
+  els.menuBackdrop.onclick = closeMenu;
   els.sideMenu.querySelectorAll('button').forEach(btn => {
     btn.onclick = () => {
       switchView(btn.dataset.view);
-      els.sideMenu.classList.remove('open');
+      closeMenu();
     };
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
   });
 
   els.card.onclick = () => {
@@ -148,6 +154,21 @@ function wire() {
   };
 
   sessionInterval = setInterval(() => { sessionSeconds += 1; }, 1000);
+}
+
+function toggleMenu() {
+  const willOpen = !els.sideMenu.classList.contains('open');
+  els.sideMenu.classList.toggle('open', willOpen);
+  els.sideMenu.setAttribute('aria-hidden', String(!willOpen));
+  els.menuBackdrop.classList.toggle('open', willOpen);
+  els.menuBackdrop.setAttribute('aria-hidden', String(!willOpen));
+}
+
+function closeMenu() {
+  els.sideMenu.classList.remove('open');
+  els.sideMenu.setAttribute('aria-hidden', 'true');
+  els.menuBackdrop.classList.remove('open');
+  els.menuBackdrop.setAttribute('aria-hidden', 'true');
 }
 
 function switchView(id) {
