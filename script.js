@@ -91,6 +91,28 @@ function wire() {
         closeMenu();
         return;
       }
+      if (btn.dataset.action === 'normal-mode') {
+        state.simpleMode = false;
+        state.oniMode = false;
+        saveState();
+        syncModeToggles();
+        switchView('flashcards');
+        resetQueue();
+        renderAll();
+        closeMenu();
+        return;
+      }
+      if (btn.dataset.action === 'oni-mode') {
+        state.simpleMode = false;
+        state.oniMode = true;
+        saveState();
+        syncModeToggles();
+        switchView('flashcards');
+        resetQueue();
+        renderAll();
+        closeMenu();
+        return;
+      }
       switchView(btn.dataset.view);
       closeMenu();
     };
