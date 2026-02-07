@@ -77,6 +77,17 @@ function wire() {
   els.menuBackdrop.onclick = closeMenu;
   els.sideMenu.querySelectorAll('button').forEach(btn => {
     btn.onclick = () => {
+      if (btn.dataset.action === 'simple-mode') {
+        state.simpleMode = true;
+        state.oniMode = false;
+        saveState();
+        syncModeToggles();
+        switchView('flashcards');
+        resetQueue();
+        renderAll();
+        closeMenu();
+        return;
+      }
       switchView(btn.dataset.view);
       closeMenu();
     };
