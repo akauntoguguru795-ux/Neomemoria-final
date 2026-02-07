@@ -16,7 +16,7 @@
       <button id="simpleModeMenuBtn" data-action="simple-mode">シンプルフラッシュカードを開始</button>
       <button id="oniModeMenuBtn" data-action="oni-mode">鬼モードを開始</button>
       <button data-view="import">インポート</button>
-      <button data-view="deck">単語帳一覧</button>
+      <button data-view="deck">単語帳管理</button>
       <button data-view="stats">統計情報</button>
       <button data-view="settings">設定</button>
     </aside>
@@ -70,17 +70,45 @@
 
       <section id="import" class="view">
         <h2>CSV / テキスト インポート</h2>
-        <p>1ファイル上限: 3000語（ファイル数無制限）</p>
+        <p>1ファイル上限: 3000語。複数ファイルを一度に同じ単語帳へ追加できます。</p>
+
+        <label class="setting-item">
+          <span>取り込み先</span>
+          <select id="importDeckSelect"></select>
+        </label>
+
+        <label class="setting-item" id="newDeckNameWrap">
+          <span>新規単語帳名（新規作成時）</span>
+          <input id="deckNameInput" type="text" placeholder="例: TOEIC Day1" maxlength="60" />
+        </label>
+
         <input id="fileInput" type="file" accept=".csv,.txt" multiple />
         <button id="importBtn" type="button">インポート実行</button>
         <p id="importStatus"></p>
-        <h3>検出カラム一覧</h3>
+        <h3>単語帳一覧（インポート済み）</h3>
         <div id="columnsList" class="card-list"></div>
       </section>
 
       <section id="deck" class="view">
-        <h2>単語帳一覧（全カード）</h2>
-        <div id="deckTableWrap" class="table-wrap"></div>
+        <h2>単語帳管理</h2>
+        <div id="deckManagerList" class="deck-manager-list"></div>
+
+        <article class="deck-editor">
+          <h3 id="deckEditorTitle">単語帳編集</h3>
+          <div class="editor-toolbar">
+            <input id="deckSearchInput" type="text" placeholder="この単語帳内を検索（単語/意味/例文）" />
+          </div>
+          <div class="editor-add-row">
+            <input id="addNoInput" type="text" placeholder="No" />
+            <input id="addWordInput" type="text" placeholder="単語 *" />
+            <input id="addMeaningInput" type="text" placeholder="意味 *" />
+            <input id="addExampleInput" type="text" placeholder="例文" />
+            <input id="addExampleJaInput" type="text" placeholder="例文の和訳" />
+            <input id="addEmojiInput" type="text" placeholder="絵文字" />
+            <button id="addWordBtn" type="button">単語を追加</button>
+          </div>
+          <div id="deckTableWrap" class="table-wrap"></div>
+        </article>
       </section>
 
       <section id="stats" class="view">

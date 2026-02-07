@@ -436,3 +436,85 @@ th, td {
 
   .action-dock button { min-height: 56px; }
 }
+
+.setting-item {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.setting-item > span {
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.card-list p {
+  margin: 6px 0;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+}
+
+.deck-manager-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.deck-card {
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.deck-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(125, 166, 255, .3), var(--shadow);
+}
+
+.deck-card h4 { margin: 0 0 6px; }
+.deck-card p { margin: 0 0 10px; color: var(--muted); }
+
+.deck-card-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.deck-editor {
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.deck-editor h3 { margin-top: 0; }
+
+.editor-toolbar {
+  margin-bottom: 10px;
+}
+
+.editor-add-row {
+  display: grid;
+  grid-template-columns: 84px 1fr 1fr 1fr 1fr 100px 150px;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+button.danger {
+  border-color: color-mix(in srgb, var(--danger) 72%, transparent);
+}
+
+button.danger:hover {
+  background: color-mix(in srgb, var(--danger) 20%, transparent);
+  border-color: var(--danger);
+}
+
+@media (max-width: 1200px) {
+  .editor-add-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
