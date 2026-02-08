@@ -290,7 +290,7 @@ body::before {
 .main {
   width: min(1320px, 100%);
   margin-inline: auto;
-  padding: 14px clamp(12px, 2.2vw, 20px);
+  padding: 0 clamp(12px, 2.2vw, 20px) 12px;
 }
 
 .topbar {
@@ -334,7 +334,7 @@ body::before {
 }
 
 .view { display: none; }
-.view.active { display: block; margin-top: 14px; }
+.view.active { display: block; margin-top: 8px; }
 .card-panel { display: grid; gap: 12px; }
 
 .mode-row {
@@ -573,8 +573,8 @@ th, td {
 @keyframes sparkle { from { filter: brightness(1); } to { filter: brightness(1.25) drop-shadow(0 0 6px rgba(173, 198, 255, 0.45)); } }
 
 @media (max-width: 768px) {
-  .main { padding: 8px 10px 10px; } 
-  .topbar { position: static; }
+  .main { padding: 0 10px 10px; }
+  .topbar { position: sticky; top: 0; }
   .topbar h1 { font-size: 1.15rem; }
   .streak-badge { font-size: .86rem; }
   .mode-row { grid-template-columns: 1fr; justify-items: start; }
