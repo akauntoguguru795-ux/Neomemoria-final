@@ -524,19 +524,12 @@ function renderAll() {
   renderStats();
   refreshDeckSelect();
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
-  els.themeSelect.value = state.theme;
   const mood = normalizeMood(state.uiMood, state.theme);
   els.uiMoodSelect.value = mood;
   els.uiMoodHint.textContent = getMoodMeta(mood);
-  syncModeToggles();
   syncActionDock();
   els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
   els.columnsList.innerHTML = state.decks.map(d => `<p>${escapeHtml(d.name)}: ${getCardsByDeckId(d.id).length}語</p>`).join('') || '<p>未インポート</p>';
-}
-
-function syncModeToggles() {
-  els.oniToggle.checked = !!state.oniMode;
-  els.simpleModeToggle.checked = !!state.simpleMode;
 }
 
 function getCurrentCard() { return currentQueue[currentIndex] || null; }
