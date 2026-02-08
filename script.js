@@ -402,6 +402,7 @@ function toggleMenu() {
   els.sideMenu.setAttribute('aria-hidden', String(!willOpen));
   els.menuBackdrop.classList.toggle('open', willOpen);
   els.menuBackdrop.setAttribute('aria-hidden', String(!willOpen));
+  document.body.classList.toggle('menu-open', willOpen);
 }
 
 function closeMenu() {
@@ -409,6 +410,7 @@ function closeMenu() {
   els.sideMenu.setAttribute('aria-hidden', 'true');
   els.menuBackdrop.classList.remove('open');
   els.menuBackdrop.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('menu-open');
 }
 
 function switchView(id) {
