@@ -1222,3 +1222,132 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
   background: linear-gradient(135deg, rgba(255,211,247,.82), rgba(197,233,255,.82));
   border-color: rgba(195, 145, 255, .4);
 }
+
+/* ultra-detailed mood signatures */
+.mood-dark-muted body {
+  background:
+    radial-gradient(circle at 14% 8%, rgba(196, 207, 230, .09), transparent 34%),
+    radial-gradient(circle at 86% 78%, rgba(108, 124, 153, .14), transparent 38%),
+    linear-gradient(140deg, #0f1217, #181d25 52%, #12161d);
+}
+
+.mood-dark-muted .topbar,
+.mood-dark-muted .action-dock,
+.mood-dark-muted .mode-row {
+  border-color: rgba(172, 186, 214, .24);
+  background: linear-gradient(155deg, rgba(39, 45, 59, .72), rgba(23, 28, 37, .78));
+}
+
+.mood-dark-muted .card-back .detail {
+  background: linear-gradient(135deg, rgba(156, 168, 190, .12), rgba(101, 114, 140, .08));
+}
+
+.mood-dark-pearl body {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(242, 247, 255, .08), transparent 35%),
+    radial-gradient(circle at 89% 24%, rgba(186, 198, 224, .15), transparent 32%),
+    linear-gradient(145deg, #0b0e16, #141a26 48%, #0f131d);
+}
+
+.mood-dark-pearl .topbar h1 {
+  background: linear-gradient(96deg, #fbfdff, #c8d4f0 36%, #9faecf 68%, #f6f8ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.mood-dark-pearl .card {
+  border-color: rgba(213, 224, 246, .42);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 28px 58px rgba(4, 8, 16, .58);
+}
+
+.mood-dark-pearl .card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 18% 14%, rgba(255,255,255,.15), transparent 28%);
+}
+
+.mood-dark-campfire body {
+  background:
+    radial-gradient(circle at 84% 8%, rgba(255, 149, 57, .28), transparent 24%),
+    radial-gradient(circle at 16% 88%, rgba(255, 93, 36, .2), transparent 30%),
+    linear-gradient(150deg, #130f0c, #2a1a12 50%, #120f0d);
+}
+
+.mood-dark-campfire .topbar,
+.mood-dark-campfire .action-dock {
+  background: linear-gradient(155deg, rgba(58, 35, 21, .75), rgba(31, 21, 15, .82));
+}
+
+.mood-dark-campfire .topbar h1 {
+  background: linear-gradient(95deg, #fff5de, #ffc57c 42%, #ff9258 75%, #fff2d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 26px rgba(255, 151, 76, .28);
+}
+
+.mood-dark-campfire .card-back .detail {
+  border-color: rgba(255, 171, 107, .34);
+  background: linear-gradient(140deg, rgba(255, 143, 65, .14), rgba(255, 88, 35, .08));
+}
+
+.light.mood-light-pearl body {
+  background:
+    radial-gradient(circle at 10% 16%, rgba(255,255,255,.92), transparent 30%),
+    radial-gradient(circle at 90% 12%, rgba(216, 228, 249, .58), transparent 32%),
+    linear-gradient(142deg, #f8fbff, #edf2f9 47%, #f3f7ff);
+}
+
+.light.mood-light-pearl .topbar,
+.light.mood-light-pearl .action-dock,
+.light.mood-light-pearl .mode-row {
+  border-color: rgba(177, 192, 222, .5);
+  background: linear-gradient(158deg, rgba(255,255,255,.93), rgba(240, 246, 255, .86));
+}
+
+.light.mood-light-pearl .topbar h1 {
+  background: linear-gradient(94deg, #4f5f83, #96a7cc 45%, #6d7fa8 76%, #4e5d80);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+}
+
+.light.mood-light-pearl .card-back .detail {
+  background: linear-gradient(145deg, rgba(255,255,255,.9), rgba(233, 241, 255, .84));
+}
+
+.light.mood-light-dreamy body {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 219, 247, .72), transparent 32%),
+    radial-gradient(circle at 85% 14%, rgba(189, 229, 255, .66), transparent 36%),
+    radial-gradient(circle at 52% 92%, rgba(229, 205, 255, .52), transparent 38%),
+    linear-gradient(146deg, #fff8ff, #eff8ff 50%, #f8efff);
+}
+
+.light.mood-light-dreamy .topbar,
+.light.mood-light-dreamy .action-dock,
+.light.mood-light-dreamy .mode-row {
+  border-color: rgba(212, 170, 248, .52);
+  box-shadow: 0 16px 34px rgba(186, 154, 232, .22);
+}
+
+.light.mood-light-dreamy .topbar h1 {
+  background: linear-gradient(94deg, #7f4fa3, #cf86ee 38%, #67a9dd 74%, #8a58ae);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 20px rgba(206, 142, 245, .26);
+}
+
+.light.mood-light-dreamy .card {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.84), 0 24px 48px rgba(168, 125, 219, .2);
+}
+
+.light.mood-light-dreamy .card-back .detail {
+  border-color: rgba(210, 164, 247, .42);
+  background: linear-gradient(145deg, rgba(255, 230, 251, .72), rgba(217, 240, 255, .68));
+}
