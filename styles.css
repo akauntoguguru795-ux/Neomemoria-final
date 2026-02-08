@@ -220,7 +220,8 @@ body::before {
   opacity: 0.5;
 }
 
-.app-shell { display: flex; min-height: 100vh; }
+.app-shell { display: block; min-height: 100vh; }
+
 
 .menu-backdrop {
   position: fixed;
@@ -572,36 +573,41 @@ th, td {
 @keyframes sparkle { from { filter: brightness(1); } to { filter: brightness(1.25) drop-shadow(0 0 6px rgba(173, 198, 255, 0.45)); } }
 
 @media (max-width: 768px) {
-  .main { padding: 10px; }
+  .main { padding: 10px 10px 12px; }
   .topbar { position: static; }
   .topbar h1 { font-size: 1.15rem; }
   .streak-badge { font-size: .86rem; }
   .mode-row { grid-template-columns: 1fr; justify-items: start; }
   #queueInfo, .mode-pill { justify-self: start; }
-  .controls-row, .rating-row, .simple-rating-row { grid-template-columns: 1fr; }
-  .card { min-height: 380px; padding: 20px; border-radius: 20px; }
+   .controls-row, .rating-row, .simple-rating-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card { min-height: 360px; padding: 20px; border-radius: 20px; }
 }
 
 @media (min-width: 769px) {
   #flashcards.view.active { margin-top: 8px; }
-  .card-panel { min-height: calc(100vh - 92px); padding-bottom: 220px; }
-  .card { min-height: calc(100vh - 268px); }
-
-  .action-dock {
-    position: fixed;
-    right: 14px;
-    bottom: 14px;
-    width: min(56vw, 620px);
-    z-index: 15;
-    background: var(--panel-strong);
+   .card { min-height: calc(100vh - 308px); }
   }
 
-  .action-dock .controls-row,
-  .action-dock .rating-row,
-  .action-dock .simple-rating-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-  .action-dock button { min-height: 56px; }
+  #flashcards .card-panel {
+  min-height: calc(100vh - 96px);
+  padding-bottom: clamp(240px, 34vh, 360px);
 }
+
+  .action-dock {
+  position: fixed;
+  right: max(10px, env(safe-area-inset-right));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  width: min(96vw, 640px);
+  z-index: 20;
+  background: var(--panel-strong);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+
+.action-dock .controls-row,
+.action-dock .rating-row,
+.action-dock .simple-rating-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.action-dock button { min-height: 54px; }
 
 @media (orientation: portrait) {
   .side-menu {
@@ -611,8 +617,9 @@ th, td {
   }
 
   .main {
-    width: min(1200px, 100%);
-    padding-inline: clamp(10px, 2.8vw, 18px);
+    width: min(1120px, 100%);
+    margin-inline: auto;
+    padding-inline: clamp(10px, 2.6vw, 16px);
   }
 
   .table-wrap { max-width: 100%; }
@@ -1507,4 +1514,74 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
 
 .light.mood-light-dreamy .card-back .detail {
   box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 12px 24px rgba(210, 163, 247, .18);
+}
+
+/* Precision pass v3: richer signature per each of the 5 concepts */
+.mood-dark-muted .topbar,
+.mood-dark-muted .mode-row,
+.mood-dark-muted .action-dock {
+  background: linear-gradient(152deg, rgba(40,45,56,.82), rgba(25,29,36,.9));
+}
+
+.mood-dark-muted .card {
+  border-color: rgba(147, 157, 175, .34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 44px rgba(7,9,14,.56);
+}
+
+.mood-dark-pearl body {
+  background:
+    radial-gradient(circle at 18% 6%, rgba(239, 246, 255, .12), transparent 30%),
+    radial-gradient(circle at 76% 22%, rgba(152, 172, 208, .18), transparent 34%),
+    linear-gradient(145deg, #080b12, #111722 50%, #0a0f18);
+}
+
+.mood-dark-pearl .card {
+  background:
+    radial-gradient(circle at 86% 16%, rgba(242, 249, 255, .2), transparent 26%),
+    linear-gradient(146deg, rgba(24,31,44,.93), rgba(11,15,24,.98));
+}
+
+.mood-dark-campfire body {
+  background:
+    radial-gradient(circle at 84% 10%, rgba(255,145,62,.32), transparent 24%),
+    radial-gradient(circle at 22% 84%, rgba(255,92,38,.24), transparent 32%),
+    linear-gradient(150deg, #140f0c, #26180f 52%, #120e0c);
+}
+
+.mood-dark-campfire .card-front,
+.mood-dark-campfire .card-back .meaning {
+  text-shadow: 0 0 18px rgba(255, 153, 84, .3);
+}
+
+.light.mood-light-pearl body {
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255, 223, 160, .64), transparent 28%),
+    radial-gradient(circle at 90% 14%, rgba(168, 219, 255, .66), transparent 32%),
+    radial-gradient(circle at 58% 90%, rgba(221, 205, 255, .5), transparent 36%),
+    linear-gradient(145deg, #fffefd, #eff5ff 47%, #f4fbff);
+}
+
+.light.mood-light-pearl .card {
+  border-color: rgba(166, 193, 235, .52);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(255, 233, 184, .46), transparent 28%),
+    radial-gradient(circle at 88% 84%, rgba(180, 225, 255, .36), transparent 30%),
+    linear-gradient(150deg, rgba(255,255,255,.94), rgba(236,245,255,.88));
+}
+
+.light.mood-light-pearl .mode-pill {
+  background: linear-gradient(135deg, rgba(255, 232, 189, .78), rgba(188, 223, 255, .78));
+  border-color: rgba(113, 158, 230, .48);
+}
+
+.light.mood-light-dreamy body {
+  background:
+    radial-gradient(circle at 14% 14%, rgba(255, 201, 235, .74), transparent 30%),
+    radial-gradient(circle at 84% 18%, rgba(170, 223, 255, .7), transparent 34%),
+    radial-gradient(circle at 54% 90%, rgba(230, 192, 255, .56), transparent 38%),
+    linear-gradient(146deg, #fff8ff, #eff9ff 50%, #f7eeff);
+}
+
+.light.mood-light-dreamy .card::after {
+  opacity: .62;
 }
