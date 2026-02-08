@@ -754,3 +754,101 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
 .light.mood-light-dreamy .card{background:linear-gradient(150deg, rgba(255,255,255,.92), rgba(255,240,255,.9)); border-color:rgba(214,162,255,.56);}
 .light.mood-light-dreamy .mode-pill{background:linear-gradient(135deg, rgba(255,186,238,.62), rgba(173,221,255,.58)); border-color:rgba(208,156,255,.66);}
 .mood-dark-muted button,.mood-dark-pearl button,.mood-dark-campfire button,.light.mood-light-pearl button,.light.mood-light-dreamy button{backdrop-filter:blur(4px);}
+
+
+/* Deep concept polish per 5 moods */
+.mood-dark-muted body::after,
+.mood-dark-pearl body::after,
+.mood-dark-campfire body::after,
+.light.mood-light-pearl body::after,
+.light.mood-light-dreamy body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: .22;
+}
+
+.mood-dark-muted body::after {
+  background: radial-gradient(circle at 20% 80%, rgba(197,205,219,.12), transparent 38%);
+}
+
+.mood-dark-pearl body::after {
+  background:
+    radial-gradient(circle at 15% 75%, rgba(229,236,255,.14), transparent 36%),
+    radial-gradient(circle at 78% 18%, rgba(173,185,213,.18), transparent 33%);
+}
+
+.mood-dark-campfire body::after {
+  background:
+    radial-gradient(circle at 80% 12%, rgba(255,157,74,.28), transparent 28%),
+    radial-gradient(circle at 25% 82%, rgba(255,94,38,.2), transparent 30%);
+  animation: fireBreath 3.8s ease-in-out infinite alternate;
+}
+
+.light.mood-light-pearl body::after {
+  background: radial-gradient(circle at 50% 10%, rgba(255,255,255,.5), transparent 46%);
+}
+
+.light.mood-light-dreamy body::after {
+  background:
+    radial-gradient(circle at 22% 22%, rgba(255,184,242,.33), transparent 30%),
+    radial-gradient(circle at 78% 28%, rgba(163,220,255,.34), transparent 34%),
+    radial-gradient(circle at 50% 85%, rgba(225,196,255,.26), transparent 36%);
+}
+
+@keyframes fireBreath {
+  from { filter: blur(0px) brightness(1); opacity: .18; }
+  to { filter: blur(1px) brightness(1.1); opacity: .3; }
+}
+
+.mood-dark-campfire .side-menu,
+.mood-dark-campfire .action-dock {
+  border-color: rgba(255,168,95,.36);
+  box-shadow: 0 16px 36px rgba(31, 16, 8, .55);
+}
+
+.light.mood-light-dreamy .side-menu,
+.light.mood-light-dreamy .action-dock,
+.light.mood-light-dreamy .topbar {
+  background: color-mix(in srgb, var(--panel) 88%, rgba(255, 208, 255, .3));
+}
+
+.light.mood-light-pearl .topbar,
+.light.mood-light-pearl .mode-row {
+  box-shadow: 0 12px 30px rgba(186, 199, 227, .3);
+}
+
+.mood-dark-muted .mode-pill { background: linear-gradient(135deg, rgba(165,171,186,.34), rgba(102,112,134,.34)); }
+.mood-dark-pearl .mode-pill { background: linear-gradient(135deg, rgba(185,194,216,.36), rgba(117,128,154,.33)); }
+.mood-dark-campfire .mode-pill { background: linear-gradient(135deg, rgba(255,158,84,.42), rgba(210,86,35,.4)); }
+.light.mood-light-pearl .mode-pill { background: linear-gradient(135deg, rgba(233,238,252,.92), rgba(202,214,238,.86)); color:#3a4663; }
+.light.mood-light-dreamy .mode-pill { background: linear-gradient(135deg, rgba(255,206,247,.86), rgba(189,230,255,.82)); color:#5d457a; }
+
+.side-menu button {
+  border-radius: 14px;
+}
+
+.side-menu button[data-action="normal-mode"]::before,
+.side-menu button[data-action="simple-mode"]::before,
+.side-menu button[data-action="oni-mode"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px;
+  opacity: .88;
+}
+.side-menu button[data-action="normal-mode"]::before { background: #7fb4ff; }
+.side-menu button[data-action="simple-mode"]::before { background: #7fd9b4; }
+.side-menu button[data-action="oni-mode"]::before { background: #ff9a8a; }
+
+.setting-emphasis {
+  padding: 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+}
