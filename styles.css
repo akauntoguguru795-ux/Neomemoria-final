@@ -299,7 +299,7 @@ body::before {
   justify-content: space-between;
   gap: 12px;
   position: sticky;
-  top: 10px;
+  top: 0;
   z-index: 5;
   padding: 12px 14px;
   border-radius: 16px;
@@ -573,7 +573,7 @@ th, td {
 @keyframes sparkle { from { filter: brightness(1); } to { filter: brightness(1.25) drop-shadow(0 0 6px rgba(173, 198, 255, 0.45)); } }
 
 @media (max-width: 768px) {
-  .main { padding: 10px 10px 12px; }
+  .main { padding: 8px 10px 10px; } 
   .topbar { position: static; }
   .topbar h1 { font-size: 1.15rem; }
   .streak-badge { font-size: .86rem; }
@@ -589,15 +589,17 @@ th, td {
   }
 
   #flashcards .card-panel {
-  min-height: calc(100vh - 96px);
-  padding-bottom: clamp(240px, 34vh, 360px);
+  min-height: calc(100dvh - 104px);
+  padding-bottom: clamp(250px, 36vh, 380px);
 }
 
   .action-dock {
   position: fixed;
   right: max(10px, env(safe-area-inset-right));
   bottom: max(10px, env(safe-area-inset-bottom));
-  width: min(96vw, 640px);
+  width: min(92vw, 560px);
+  max-height: calc(100dvh - 86px);
+  overflow: auto;
   z-index: 20;
   background: var(--panel-strong);
   backdrop-filter: blur(18px) saturate(125%);
