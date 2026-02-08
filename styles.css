@@ -528,6 +528,9 @@ button:active { transform: translateY(0); }
 .action-dock.simple-only .controls-row,
 .action-dock.simple-only .rating-row { display: none; }
 .action-dock.simple-only .simple-rating-row { display: grid; }
+.action-dock.oni-only .controls-row,
+.action-dock.oni-only .rating-row,
+.action-dock.oni-only .simple-rating-row { display: none !important; }
 
 .table-wrap { overflow: auto; border-radius: 14px; border: 1px solid var(--line-soft); }
 
@@ -741,3 +744,13 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
 .mood-hint{margin:8px 2px 0;color:var(--muted);font-size:.9rem;line-height:1.45;letter-spacing:.01em;}
 .setting-emphasis select{border-radius:14px;padding:14px 16px;}
 .setting-emphasis select:focus{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent),0 10px 24px rgba(0,0,0,.18);}
+
+
+.mood-dark-muted .card{background:linear-gradient(145deg, rgba(35,38,45,.95), rgba(24,27,33,.95));}
+.mood-dark-pearl .card{background:linear-gradient(150deg, rgba(30,33,44,.94), rgba(16,19,27,.97)); box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 24px 46px rgba(4,6,12,.55);}
+.mood-dark-campfire .card{background:radial-gradient(circle at 18% 90%, rgba(255,140,52,.15), transparent 35%),linear-gradient(150deg, rgba(40,28,20,.95), rgba(18,14,12,.98)); border-color:rgba(255,166,86,.45);}
+.mood-dark-campfire .mode-pill{background:linear-gradient(135deg, rgba(255,147,66,.36), rgba(232,99,54,.35)); border-color:rgba(255,181,126,.6);}
+.light.mood-light-pearl .card{background:linear-gradient(150deg, rgba(255,255,255,.93), rgba(245,246,251,.92)); border-color:rgba(188,198,223,.62);}
+.light.mood-light-dreamy .card{background:linear-gradient(150deg, rgba(255,255,255,.92), rgba(255,240,255,.9)); border-color:rgba(214,162,255,.56);}
+.light.mood-light-dreamy .mode-pill{background:linear-gradient(135deg, rgba(255,186,238,.62), rgba(173,221,255,.58)); border-color:rgba(208,156,255,.66);}
+.mood-dark-muted button,.mood-dark-pearl button,.mood-dark-campfire button,.light.mood-light-pearl button,.light.mood-light-dreamy button{backdrop-filter:blur(4px);}
