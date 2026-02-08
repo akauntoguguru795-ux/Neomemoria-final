@@ -99,7 +99,7 @@ function normalizeState(raw) {
     files: Array.isArray(raw.files) ? raw.files : [],
     mode: raw.mode || 'random',
     theme: raw.theme || 'dark',
-    designVariant: raw.designVariant === 'avant' ? 'avant' : 'pearl',
+    designVariant: 'pearl',
     oniMode: !!raw.oniMode,
     simpleMode: !!raw.simpleMode,
     stats: raw.stats || {
@@ -325,7 +325,8 @@ function wire() {
   };
 
   els.designVariantSelect.onchange = () => {
-    state.designVariant = els.designVariantSelect.value === 'avant' ? 'avant' : 'pearl';
+    state.designVariant = 'pearl';
+    els.designVariantSelect.value = 'pearl';
     saveState();
     applyTheme();
   };
@@ -519,7 +520,7 @@ function renderAll() {
   refreshDeckSelect();
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
-  els.designVariantSelect.value = state.designVariant;
+  els.designVariantSelect.value = 'pearl';
   syncModeToggles();
   syncActionDock();
   els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
@@ -554,7 +555,7 @@ function renderCard() {
   } else if (mode === 'oni') {
     els.front.textContent = `${c.meaning} ${c.emoji || ''}`;
     els.back.innerHTML = showingBack
-      ? '<div class="detail"><span class="label">入力欄でスペルを回答してください</span>答えは入力してから「答え合わせ」で確認</div>'
+      ? '<div class="detail"><span class="label">スペル入力</span>下の入力欄に英単語のスペルを入力して、答え合わせしてください。</div>'
       : '<div class="detail">スペルを入力して答え合わせ</div>';
   } else {
     els.front.textContent = `No.${escapeHtml(c.no)}  ${c.word}`;
@@ -629,6 +630,7 @@ function renderDeck() {
     els.deckManagerList.innerHTML = '<p>単語帳がありません。インポートで作成してください。</p>';
     els.deckEditorTitle.textContent = '単語帳編集';
     els.deckTableWrap.innerHTML = '<p>一覧から単語帳を選択してください。</p>';
+    els.deckEditor.classList.add('hidden');
     return;
   }
 
@@ -698,6 +700,7 @@ function renderDeckEditor() {
   if (!deck) {
     els.deckEditorTitle.textContent = '単語帳編集';
     els.deckTableWrap.innerHTML = '<p>一覧から単語帳を選択してください。</p>';
+    els.deckEditor.classList.add('hidden');
     return;
   }
 
@@ -790,8 +793,8 @@ function applyTheme() {
   const root = document.documentElement;
   root.classList.add('theme-switching');
   root.classList.toggle('light', state.theme === 'light');
-  root.classList.remove('variant-pearl', 'variant-avant');
-  root.classList.add(state.designVariant === 'avant' ? 'variant-avant' : 'variant-pearl');
+  root.classList.remove('variant-avant');
+  root.classList.add('variant-pearl');
   requestAnimationFrame(() => root.classList.remove('theme-switching'));
 }
 

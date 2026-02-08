@@ -11,7 +11,7 @@
         if (!raw) return;
         var st = JSON.parse(raw);
         if (st && st.theme === 'light') document.documentElement.classList.add('light');
-        document.documentElement.classList.add((st && st.designVariant === 'avant') ? 'variant-avant' : 'variant-pearl');
+        document.documentElement.classList.add('variant-pearl');
       } catch (e) {}
     })();
   </script>
@@ -153,10 +153,9 @@
           <input id="simpleModeToggle" type="checkbox" />
         </label>
         <label class="setting-item">
-          <span>デザインUI（2バージョン）</span>
+          <span>デザインUI（Version 1 固定）</span>
           <select id="designVariantSelect">
-            <option value="pearl">Pearl Signature（既存コンセプト深化）</option>
-            <option value="avant">Avant Aura（大胆リデザイン）</option>
+            <option value="pearl">Pearl Signature（黒真珠 / 白真珠）</option>
           </select>
         </label>
       </section>
