@@ -50,9 +50,6 @@ const els = {
   studyTimeStat: document.getElementById('studyTimeStat'),
   distributionStat: document.getElementById('distributionStat'),
   weeklyGraph: document.getElementById('weeklyGraph'),
-  themeSelect: document.getElementById('themeSelect'),
-  oniToggle: document.getElementById('oniModeToggle'),
-  simpleModeToggle: document.getElementById('simpleModeToggle'),
   uiMoodSelect: document.getElementById('uiMoodSelect'),
   uiMoodHint: document.getElementById('uiMoodHint'),
   oniBox: document.getElementById('oniModeBox'),
@@ -193,7 +190,6 @@ function setPracticeMode(mode) {
   state.simpleMode = mode === 'simple';
   state.oniMode = mode === 'oni';
   saveState();
-  syncModeToggles();
   switchView('flashcards');
   resetQueue();
   renderAll();
@@ -341,32 +337,12 @@ function wire() {
   els.addWordBtn.onclick = addWordToActiveDeck;
   els.deckSearchInput.oninput = renderDeckEditor;
 
-  els.themeSelect.onchange = () => {
-    state.theme = els.themeSelect.value;
-    state.uiMood = state.theme === 'light' ? 'light-pearl' : 'dark-muted';
-    saveState();
-    applyTheme();
-    renderAll();
-  };
-
   els.uiMoodSelect.onchange = () => {
     state.uiMood = normalizeMood(els.uiMoodSelect.value, state.theme);
     state.theme = getThemeFromMood(state.uiMood);
     saveState();
     applyTheme();
     renderAll();
-  };
-    
-  els.oniToggle.onchange = () => {
-    if (els.oniToggle.checked) setPracticeMode('oni');
-    else if (els.simpleModeToggle.checked) setPracticeMode('simple');
-    else setPracticeMode('normal');
-  };
-
-  els.simpleModeToggle.onchange = () => {
-    if (els.simpleModeToggle.checked) setPracticeMode('simple');
-    else if (els.oniToggle.checked) setPracticeMode('oni');
-    else setPracticeMode('normal');
   };
 
   document.querySelectorAll('[data-simple-rating]').forEach(btn => {
@@ -529,13 +505,16 @@ function getCurrentModeLabel() {
 }
 
 function syncActionDock() {
-  const simple = !!state.simpleMode;
+  const mode = getPracticeMode();
+  const simple = mode === 'simple';
+  const oni = mode === 'oni';
   els.actionDock.classList.toggle('simple-only', simple);
-  els.controlsRow.classList.toggle('hidden', simple);
-  els.ratingRow.classList.toggle('hidden', simple);
+  els.actionDock.classList.toggle('oni-only', oni);
+  els.controlsRow.classList.toggle('hidden', simple || oni);
+  els.ratingRow.classList.toggle('hidden', simple || oni);
   els.simpleRatingRow.classList.toggle('hidden', !simple);
-  els.controlsRow.style.display = simple ? 'none' : '';
-  els.ratingRow.style.display = simple ? 'none' : '';
+  els.controlsRow.style.display = (simple || oni) ? 'none' : '';
+  els.ratingRow.style.display = (simple || oni) ? 'none' : '';
   els.simpleRatingRow.style.display = simple ? 'grid' : 'none';
 }
 
