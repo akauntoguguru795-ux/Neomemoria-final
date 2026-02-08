@@ -10,8 +10,10 @@
         var raw = localStorage.getItem('neomemoria-state-v1');
         if (!raw) return;
         var st = JSON.parse(raw);
-        if (st && st.theme === 'light') document.documentElement.classList.add('light');
-        document.documentElement.classList.add('variant-pearl');
+        var mood = (st && st.uiMood) || 'dark-muted';
+        var isLight = mood.startsWith('light-') || (st && st.theme === 'light');
+        if (isLight) document.documentElement.classList.add('light');
+        document.documentElement.classList.add('mood-' + mood);
       } catch (e) {}
     })();
   </script>
@@ -152,10 +154,14 @@
           <span>シンプルフラッシュカード（表:英単語 / 裏:意味）</span>
           <input id="simpleModeToggle" type="checkbox" />
         </label>
-        <label class="setting-item">
-          <span>デザインUI（Version 1 固定）</span>
-          <select id="designVariantSelect">
-            <option value="pearl">Pearl Signature（黒真珠 / 白真珠）</option>
+        <label class="setting-item setting-emphasis">
+          <span>デザイン・UIコンセプト</span>
+          <select id="uiMoodSelect">
+            <option value="dark-muted">Dark 1: くすみダーク（目に優しい）</option>
+            <option value="dark-pearl">Dark 2: 黒真珠 + 静かな光</option>
+            <option value="dark-campfire">Dark 3: 暗い森と焚き火</option>
+            <option value="light-pearl">Light 1: 白真珠 + 上品な光</option>
+            <option value="light-dreamy">Light 2: 夢かわいいモード</option>
           </select>
         </label>
       </section>
