@@ -852,3 +852,208 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
   border-radius: 14px;
   background: color-mix(in srgb, var(--panel) 88%, transparent);
 }
+/* Ultra-detail concept pass for the 5 moods */
+.topbar,
+.card,
+.action-dock,
+.side-menu,
+.mode-pill,
+.setting-emphasis,
+.deck-editor {
+  position: relative;
+  overflow: hidden;
+}
+
+.topbar::after,
+.card::after,
+.action-dock::after,
+.deck-editor::after,
+.setting-emphasis::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.14) 48%, transparent 66%);
+  transform: translateX(-130%);
+  transition: transform .85s ease;
+  opacity: .45;
+}
+
+.topbar:hover::after,
+.card:hover::after,
+.action-dock:hover::after,
+.deck-editor:hover::after,
+.setting-emphasis:hover::after {
+  transform: translateX(130%);
+}
+
+.mood-dark-muted .topbar,
+.mood-dark-muted .action-dock,
+.mood-dark-muted .deck-editor,
+.mood-dark-muted .setting-emphasis {
+  border-color: rgba(189, 198, 215, .2);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 15px 34px rgba(2, 4, 8, .58);
+}
+
+.mood-dark-muted .topbar h1 {
+  background: linear-gradient(90deg, #dde5f1, #b8c3d7 45%, #8b96aa 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 0 22px rgba(160, 176, 203, .2);
+}
+
+.mood-dark-pearl .topbar,
+.mood-dark-pearl .mode-row,
+.mood-dark-pearl .action-dock,
+.mood-dark-pearl .deck-editor {
+  border-color: rgba(214, 224, 243, .24);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 16px 38px rgba(6, 8, 16, .62);
+}
+
+.mood-dark-pearl .topbar h1 {
+  background: linear-gradient(95deg, #f8fbff, #c6d6f5 46%, #98a7c8 84%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 0 24px rgba(184, 208, 244, .26);
+}
+
+.mood-dark-campfire .topbar,
+.mood-dark-campfire .action-dock,
+.mood-dark-campfire .deck-editor,
+.mood-dark-campfire .setting-emphasis {
+  border-color: rgba(255, 188, 130, .34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 218, 178, .18),
+    0 16px 38px rgba(20, 10, 6, .6);
+}
+
+.mood-dark-campfire .topbar h1 {
+  background: linear-gradient(92deg, #fff4de, #ffbf82 43%, #ff8d57 75%, #ffd6ab);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 0 24px rgba(255, 151, 86, .4);
+}
+
+.mood-dark-campfire .card {
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,185,.12),
+    0 24px 48px rgba(18, 8, 4, .62),
+    0 0 0 1px rgba(255, 163, 92, .16);
+}
+
+.mood-dark-campfire .card-front {
+  text-shadow: 0 0 16px rgba(255, 163, 96, .26);
+}
+
+.light.mood-light-pearl .topbar,
+.light.mood-light-pearl .action-dock,
+.light.mood-light-pearl .deck-editor,
+.light.mood-light-pearl .setting-emphasis {
+  border-color: rgba(181, 195, 223, .5);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    0 16px 34px rgba(182, 195, 224, .35);
+}
+
+.light.mood-light-pearl .topbar h1 {
+  background: linear-gradient(94deg, #7282a6, #4f648f 48%, #9ea9c4 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 0 18px rgba(180, 191, 218, .45);
+}
+
+.light.mood-light-dreamy .topbar,
+.light.mood-light-dreamy .action-dock,
+.light.mood-light-dreamy .deck-editor,
+.light.mood-light-dreamy .setting-emphasis {
+  border-color: rgba(201, 156, 247, .42);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.82),
+    0 16px 36px rgba(211, 164, 255, .28);
+}
+
+.light.mood-light-dreamy .topbar h1 {
+  background: linear-gradient(90deg, #8660c0, #cc77d8 46%, #63a7dc 88%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(198, 143, 255, .35);
+}
+
+.light.mood-light-dreamy .card {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.88),
+    0 20px 44px rgba(193, 129, 255, .22),
+    0 0 0 1px rgba(199, 143, 255, .18);
+}
+
+.mood-dark-muted .mode-pill,
+.mood-dark-pearl .mode-pill,
+.mood-dark-campfire .mode-pill,
+.light.mood-light-pearl .mode-pill,
+.light.mood-light-dreamy .mode-pill {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 8px 20px rgba(0,0,0,.2);
+}
+
+.mood-dark-muted .side-menu::before {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(144, 160, 186, .21), transparent 34%),
+    linear-gradient(170deg, rgba(105, 118, 143, .08), transparent 55%);
+}
+
+.mood-dark-pearl .side-menu::before {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(180, 197, 225, .24), transparent 34%),
+    radial-gradient(circle at 12% 88%, rgba(144, 159, 190, .15), transparent 36%);
+}
+
+.mood-dark-campfire .side-menu::before {
+  background:
+    radial-gradient(circle at 88% 10%, rgba(255, 173, 99, .34), transparent 32%),
+    radial-gradient(circle at 18% 82%, rgba(255, 98, 49, .2), transparent 35%);
+}
+
+.light.mood-light-pearl .side-menu::before {
+  background:
+    radial-gradient(circle at 86% 6%, rgba(255, 255, 255, .74), transparent 36%),
+    radial-gradient(circle at 12% 88%, rgba(199, 212, 238, .34), transparent 38%);
+}
+
+.light.mood-light-dreamy .side-menu::before {
+  background:
+    radial-gradient(circle at 84% 8%, rgba(255, 192, 247, .42), transparent 36%),
+    radial-gradient(circle at 14% 88%, rgba(170, 224, 255, .38), transparent 36%);
+}
+
+.mood-dark-muted .card::before,
+.mood-dark-pearl .card::before,
+.mood-dark-campfire .card::before,
+.light.mood-light-pearl .card::before,
+.light.mood-light-dreamy .card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(140deg, rgba(255,255,255,.14), transparent 40%),
+    linear-gradient(-140deg, rgba(255,255,255,.08), transparent 42%);
+  opacity: .42;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar::after,
+  .card::after,
+  .action-dock::after,
+  .deck-editor::after,
+  .setting-emphasis::after {
+    transition: none;
+    transform: none;
+  }
+
+  .mood-dark-campfire body::after {
+    animation: none;
+  }
+}
