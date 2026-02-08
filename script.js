@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'neomemoria-state-v1';
-const MAX_WORDS_PER_FILE = 3000;
+const MAX_WORDS_PER_FILE = 10000;
 const DAY = 24 * 60 * 60 * 1000;
 
 const state = normalizeState(loadState());
@@ -51,7 +51,6 @@ const els = {
   distributionStat: document.getElementById('distributionStat'),
   weeklyGraph: document.getElementById('weeklyGraph'),
   uiMoodSelect: document.getElementById('uiMoodSelect'),
-  uiMoodHint: document.getElementById('uiMoodHint'),
   oniBox: document.getElementById('oniModeBox'),
   oniInput: document.getElementById('oniInput'),
   oniCheckBtn: document.getElementById('oniCheckBtn'),
@@ -168,17 +167,6 @@ function getThemeFromMood(mood) {
 }
 
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-
-function getMoodMeta(mood) {
-  const map = {
-    'dark-muted': '静かな陰影で目に優しい、長時間学習向けのモード。',
-    'dark-pearl': '黒真珠のような上品な艶と、穏やかな光のアクセント。',
-    'dark-campfire': '暗い森と焚き火を思わせる、温かいコントラスト。',
-    'light-pearl': '白真珠の透明感と柔らかな光で、洗練された明るさ。',
-    'light-dreamy': '夢の中のような優しい色調で、可愛くふんわり。'
-  };
-  return map[mood] || map['dark-muted'];
-}
 
 function getPracticeMode() {
   if (state.simpleMode) return 'simple';
@@ -328,7 +316,7 @@ function wire() {
     resetQueue();
     renderAll();
 
-    els.importStatus.textContent = `インポート完了: ${imported}語（スキップ: ${skipped}件） / 単語帳: ${deck.name}`;
+    els.importStatus.textContent = `インポート完了: ${imported}語（上限超過スキップ: ${skipped}件 / 1ファイル最大${MAX_WORDS_PER_FILE}語） / 単語帳: ${deck.name}`;
     els.fileInput.value = '';
     els.deckNameInput.value = '';
     refreshDeckSelect();
@@ -414,6 +402,7 @@ function toggleMenu() {
   els.sideMenu.setAttribute('aria-hidden', String(!willOpen));
   els.menuBackdrop.classList.toggle('open', willOpen);
   els.menuBackdrop.setAttribute('aria-hidden', String(!willOpen));
+  document.body.classList.toggle('menu-open', willOpen);
 }
 
 function closeMenu() {
@@ -421,6 +410,7 @@ function closeMenu() {
   els.sideMenu.setAttribute('aria-hidden', 'true');
   els.menuBackdrop.classList.remove('open');
   els.menuBackdrop.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('menu-open');
 }
 
 function switchView(id) {
@@ -526,7 +516,6 @@ function renderAll() {
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   const mood = normalizeMood(state.uiMood, state.theme);
   els.uiMoodSelect.value = mood;
-  els.uiMoodHint.textContent = getMoodMeta(mood);
   syncActionDock();
   els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
   els.columnsList.innerHTML = state.decks.map(d => `<p>${escapeHtml(d.name)}: ${getCardsByDeckId(d.id).length}語</p>`).join('') || '<p>未インポート</p>';
