@@ -100,6 +100,86 @@
   --fx3: rgba(154, 223, 230, 0.2);
 }
 
+
+root.mood-dark-muted {
+  --bg: #121417;
+  --bg-2: #171a1f;
+  --panel: rgba(30, 33, 40, 0.78);
+  --panel-strong: rgba(22, 24, 30, 0.94);
+  --text: #edf0f5;
+  --muted: #a9b0bd;
+  --accent: #8f9aae;
+  --accent-2: #7d8698;
+  --line: rgba(196, 205, 223, 0.19);
+  --line-soft: rgba(196, 205, 223, 0.13);
+  --fx1: rgba(165, 172, 189, 0.12);
+  --fx2: rgba(110, 122, 149, 0.11);
+  --fx3: rgba(80, 90, 108, 0.1);
+}
+
+:root.mood-dark-pearl {
+  --bg: #0d1018;
+  --bg-2: #181b25;
+  --panel: rgba(24, 27, 37, 0.76);
+  --panel-strong: rgba(20, 22, 31, 0.92);
+  --text: #f2f4f7;
+  --muted: #a7afc1;
+  --accent: #9ea7b8;
+  --accent-2: #7a8497;
+  --line: rgba(210, 220, 238, 0.22);
+  --line-soft: rgba(210, 220, 238, 0.14);
+  --fx1: rgba(236, 242, 255, 0.1);
+  --fx2: rgba(166, 176, 198, 0.13);
+  --fx3: rgba(113, 125, 148, 0.09);
+}
+
+:root.mood-dark-campfire {
+  --bg: #13100d;
+  --bg-2: #201612;
+  --panel: rgba(41, 29, 21, 0.78);
+  --panel-strong: rgba(28, 20, 15, 0.92);
+  --text: #fff1df;
+  --muted: #d6b99e;
+  --accent: #f9a14a;
+  --accent-2: #d26a2f;
+  --line: rgba(255, 193, 133, 0.24);
+  --line-soft: rgba(255, 193, 133, 0.16);
+  --fx1: rgba(255, 147, 66, 0.25);
+  --fx2: rgba(255, 96, 39, 0.18);
+  --fx3: rgba(255, 218, 111, 0.12);
+}
+
+:root.light.mood-light-pearl {
+  --bg: #f8f9fc;
+  --bg-2: #eceef4;
+  --panel: rgba(255, 255, 255, 0.86);
+  --panel-strong: rgba(255, 255, 255, 0.95);
+  --text: #2a3140;
+  --muted: #707a92;
+  --accent: #abb6d2;
+  --accent-2: #8f9bb8;
+  --line: rgba(168, 180, 208, 0.3);
+  --line-soft: rgba(168, 180, 208, 0.2);
+  --fx1: rgba(255, 255, 255, 0.66);
+  --fx2: rgba(204, 214, 235, 0.45);
+  --fx3: rgba(221, 228, 244, 0.4);
+}
+
+:root.light.mood-light-dreamy {
+  --bg: #fff6ff;
+  --bg-2: #eef8ff;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-strong: rgba(255, 255, 255, 0.96);
+  --text: #5a4772;
+  --muted: #907cae;
+  --accent: #c289ff;
+  --accent-2: #7ec6ff;
+  --line: rgba(194, 137, 255, 0.26);
+  --line-soft: rgba(194, 137, 255, 0.16);
+  --fx1: rgba(255, 186, 238, 0.35);
+  --fx2: rgba(166, 212, 255, 0.32);
+  --fx3: rgba(236, 195, 255, 0.24);
+}
 * { box-sizing: border-box; }
 
 .theme-switching *,
@@ -652,3 +732,8 @@ input[type="checkbox"]:checked::after {
 .deck-editor.hidden {
   display: none;
 }
+
+
+.setting-emphasis select{font-weight:700;border-width:2px;box-shadow:0 10px 24px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.08);}
+.setting-emphasis span{font-weight:700;}
+select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.04));}
