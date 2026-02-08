@@ -1057,3 +1057,168 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
     animation: none;
   }
 }
+
+/* Ultra-detail pass: immersive identity for each mood */
+:root {
+  --glass-sheen: linear-gradient(140deg, rgba(255,255,255,.22), rgba(255,255,255,.02));
+}
+
+.topbar,
+.card,
+.action-dock,
+.side-menu,
+.mode-row {
+  position: relative;
+  isolation: isolate;
+}
+
+.topbar::after,
+.card::after,
+.action-dock::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--glass-sheen);
+  opacity: .45;
+  z-index: -1;
+}
+
+.mode-pill {
+  border-width: 1px;
+  letter-spacing: .03em;
+  text-shadow: 0 1px 0 rgba(0,0,0,.18);
+}
+
+.card {
+  box-shadow:
+    0 30px 55px rgba(5, 9, 18, .45),
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    inset 0 22px 48px rgba(255,255,255,.02);
+}
+
+.card .detail,
+.card .meaning {
+  backdrop-filter: blur(3px);
+  border: 1px solid color-mix(in srgb, var(--line-soft) 72%, transparent);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+}
+
+.action-dock {
+  overflow: hidden;
+}
+
+.action-dock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 88% -15%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 45%);
+  opacity: .75;
+}
+
+.side-menu h2 {
+  font-weight: 800;
+  background: linear-gradient(110deg, color-mix(in srgb, var(--text) 92%, white), color-mix(in srgb, var(--accent) 48%, var(--text)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.side-menu button {
+  font-weight: 650;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 8px 20px rgba(0,0,0,.18);
+}
+
+/* Dark muted: tranquil and low fatigue */
+.mood-dark-muted body::before { opacity: .34; }
+.mood-dark-muted .topbar,
+.mood-dark-muted .action-dock {
+  border-color: rgba(170, 184, 202, .22);
+  box-shadow: 0 20px 40px rgba(4, 6, 10, .42);
+}
+.mood-dark-muted .card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(165deg, rgba(176,190,212,.08), transparent 48%, rgba(125,137,158,.08));
+}
+
+/* Dark pearl: glossy premium */
+.mood-dark-pearl .topbar,
+.mood-dark-pearl .mode-row,
+.mood-dark-pearl .action-dock {
+  border-color: rgba(208, 219, 240, .27);
+  box-shadow: 0 16px 38px rgba(2, 5, 13, .5), inset 0 1px 0 rgba(255,255,255,.09);
+}
+.mood-dark-pearl .side-menu::before {
+  background:
+    radial-gradient(circle at 84% 12%, rgba(227,236,255,.21), transparent 38%),
+    radial-gradient(circle at 26% 88%, rgba(146,159,190,.14), transparent 45%);
+}
+.mood-dark-pearl .card {
+  border-color: rgba(210, 220, 238, .34);
+}
+
+/* Dark campfire: ember kinetics */
+.mood-dark-campfire body::before {
+  opacity: .2;
+  background-image:
+    linear-gradient(to right, rgba(255, 190, 120, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 140, 84, 0.05) 1px, transparent 1px);
+}
+.mood-dark-campfire .card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from 180deg at 50% 120%, rgba(255,179,97,.14), rgba(255,98,39,.12), rgba(255,178,113,.14));
+  filter: blur(10px);
+  z-index: -2;
+}
+.mood-dark-campfire .mode-pill,
+.mood-dark-campfire #oniCheckBtn {
+  box-shadow: 0 0 0 1px rgba(255,181,126,.35), 0 14px 28px rgba(56, 22, 9, .44);
+}
+
+/* Light pearl: airy and elegant */
+.light.mood-light-pearl body::before {
+  opacity: .42;
+  mask-image: radial-gradient(circle at center, black 22%, transparent 88%);
+}
+.light.mood-light-pearl .topbar,
+.light.mood-light-pearl .action-dock {
+  border-color: rgba(171, 184, 210, .42);
+  box-shadow: 0 20px 36px rgba(185, 198, 222, .3);
+}
+.light.mood-light-pearl .card {
+  box-shadow: 0 22px 40px rgba(178, 189, 212, .34), inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* Light dreamy: magical pastel */
+.light.mood-light-dreamy .topbar,
+.light.mood-light-dreamy .mode-row,
+.light.mood-light-dreamy .action-dock {
+  border-color: rgba(205, 162, 255, .42);
+  box-shadow: 0 18px 34px rgba(205, 162, 255, .24), 0 10px 22px rgba(139, 207, 255, .18);
+}
+.light.mood-light-dreamy .card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255,194,238,.3), transparent 28%),
+    radial-gradient(circle at 84% 78%, rgba(177,229,255,.28), transparent 30%);
+}
+.light.mood-light-dreamy .streak-badge {
+  background: linear-gradient(135deg, rgba(255,211,247,.82), rgba(197,233,255,.82));
+  border-color: rgba(195, 145, 255, .4);
+}
