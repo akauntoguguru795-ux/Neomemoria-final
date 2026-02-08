@@ -53,7 +53,7 @@ const els = {
   themeSelect: document.getElementById('themeSelect'),
   oniToggle: document.getElementById('oniModeToggle'),
   simpleModeToggle: document.getElementById('simpleModeToggle'),
-  designVariantSelect: document.getElementById('designVariantSelect'),
+  uiMoodSelect: document.getElementById('uiMoodSelect'),
   oniBox: document.getElementById('oniModeBox'),
   oniInput: document.getElementById('oniInput'),
   oniCheckBtn: document.getElementById('oniCheckBtn'),
@@ -78,7 +78,7 @@ function loadState() {
     files: [],
     mode: 'random',
     theme: 'dark',
-    designVariant: 'pearl',
+    uiMood: 'dark-muted',
     oniMode: false,
     simpleMode: false,
     stats: {
@@ -99,7 +99,7 @@ function normalizeState(raw) {
     files: Array.isArray(raw.files) ? raw.files : [],
     mode: raw.mode || 'random',
     theme: raw.theme || 'dark',
-    designVariant: 'pearl',
+    uiMood: 'dark-muted',
     oniMode: !!raw.oniMode,
     simpleMode: !!raw.simpleMode,
     stats: raw.stats || {
@@ -157,6 +157,16 @@ function normalizeState(raw) {
   }));
 
   return s;
+}
+
+function normalizeMood(mood, fallbackTheme = 'dark') {
+  const all = ['dark-muted', 'dark-pearl', 'dark-campfire', 'light-pearl', 'light-dreamy'];
+  if (all.includes(mood)) return mood;
+  return fallbackTheme === 'light' ? 'light-pearl' : 'dark-muted';
+}
+
+function getThemeFromMood(mood) {
+  return mood.startsWith('light-') ? 'light' : 'dark';
 }
 
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -229,6 +239,7 @@ function wire() {
   });
 
   els.card.onclick = () => {
+    if (getPracticeMode() === 'oni') return;
     showingBack = !showingBack;
     renderCard();
   };
@@ -320,17 +331,20 @@ function wire() {
 
   els.themeSelect.onchange = () => {
     state.theme = els.themeSelect.value;
+    state.uiMood = state.theme === 'light' ? 'light-pearl' : 'dark-muted';
     saveState();
     applyTheme();
+    renderAll();
   };
 
-  els.designVariantSelect.onchange = () => {
-    state.designVariant = 'pearl';
-    els.designVariantSelect.value = 'pearl';
+  els.uiMoodSelect.onchange = () => {
+    state.uiMood = normalizeMood(els.uiMoodSelect.value, state.theme);
+    state.theme = getThemeFromMood(state.uiMood);
     saveState();
     applyTheme();
+    renderAll();
   };
-
+    
   els.oniToggle.onchange = () => {
     if (els.oniToggle.checked) setPracticeMode('oni');
     else if (els.simpleModeToggle.checked) setPracticeMode('simple');
@@ -520,7 +534,7 @@ function renderAll() {
   refreshDeckSelect();
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
-  els.designVariantSelect.value = 'pearl';
+  els.uiMoodSelect.value = normalizeMood(state.uiMood, state.theme);
   syncModeToggles();
   syncActionDock();
   els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
@@ -554,9 +568,7 @@ function renderCard() {
       : '<div class="detail">...</div>';
   } else if (mode === 'oni') {
     els.front.textContent = `${c.meaning} ${c.emoji || ''}`;
-    els.back.innerHTML = showingBack
-      ? '<div class="detail"><span class="label">スペル入力</span>下の入力欄に英単語のスペルを入力して、答え合わせしてください。</div>'
-      : '<div class="detail">スペルを入力して答え合わせ</div>';
+    els.back.innerHTML = '<div class="detail"><span class="label">回答方法</span>下の入力欄に英単語のスペルを入力して、答え合わせしてください。</div>';
   } else {
     els.front.textContent = `No.${escapeHtml(c.no)}  ${c.word}`;
     els.back.innerHTML = showingBack
@@ -791,10 +803,13 @@ function streakEffect(streak) {
 
 function applyTheme() {
   const root = document.documentElement;
+  const mood = normalizeMood(state.uiMood, state.theme);
+  state.uiMood = mood;
+  state.theme = getThemeFromMood(mood);
   root.classList.add('theme-switching');
   root.classList.toggle('light', state.theme === 'light');
-  root.classList.remove('variant-avant');
-  root.classList.add('variant-pearl');
+  root.classList.remove('mood-dark-muted','mood-dark-pearl','mood-dark-campfire','mood-light-pearl','mood-light-dreamy');
+  root.classList.add(`mood-${mood}`);
   requestAnimationFrame(() => root.classList.remove('theme-switching'));
 }
 
