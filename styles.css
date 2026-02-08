@@ -101,7 +101,7 @@
 }
 
 
-root.mood-dark-muted {
+ :root.mood-dark-muted {
   --bg: #121417;
   --bg-2: #171a1f;
   --panel: rgba(30, 33, 40, 0.78);
@@ -1350,4 +1350,80 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
 .light.mood-light-dreamy .card-back .detail {
   border-color: rgba(210, 164, 247, .42);
   background: linear-gradient(145deg, rgba(255, 230, 251, .72), rgba(217, 240, 255, .68));
+}
+
+/* 2026 quality pass: stronger separation across 5 UI concepts */
+:root.mood-dark-muted {
+  --accent: #7f8898;
+  --accent-2: #6f7684;
+}
+
+.mood-dark-muted .card,
+.mood-dark-muted .topbar,
+.mood-dark-muted .action-dock,
+.mood-dark-muted .deck-editor {
+  background-image: linear-gradient(160deg, rgba(42, 46, 55, .88), rgba(24, 27, 34, .94));
+  border-color: rgba(154, 163, 181, .24);
+}
+
+.mood-dark-muted .card::after,
+.mood-dark-muted .topbar::after {
+  opacity: .14;
+}
+
+:root.mood-dark-pearl {
+  --accent: #b8c7e9;
+  --accent-2: #7f90b8;
+}
+
+.mood-dark-pearl .card,
+.mood-dark-pearl .topbar,
+.mood-dark-pearl .action-dock,
+.mood-dark-pearl .deck-editor {
+  border-color: rgba(210, 224, 255, .46);
+  background-image:
+    radial-gradient(circle at 84% 14%, rgba(236, 244, 255, .14), transparent 34%),
+    linear-gradient(145deg, rgba(30, 37, 52, .9), rgba(13, 18, 28, .96));
+}
+
+.mood-dark-pearl .card::after,
+.mood-dark-pearl .topbar::after {
+  opacity: .52;
+}
+
+.light.mood-light-pearl {
+  --accent: #6da6ff;
+  --accent-2: #8f8ee8;
+}
+
+.light.mood-light-pearl body {
+  background:
+    radial-gradient(circle at 16% 14%, rgba(255, 234, 196, .66), transparent 32%),
+    radial-gradient(circle at 82% 20%, rgba(190, 225, 255, .64), transparent 36%),
+    radial-gradient(circle at 54% 88%, rgba(222, 228, 255, .56), transparent 40%),
+    linear-gradient(145deg, #fbfdff, #eef4ff 50%, #f6f9ff);
+}
+
+.light.mood-light-pearl .mode-pill {
+  color: #32486c;
+  border-color: rgba(120, 151, 214, .5);
+  box-shadow: 0 8px 18px rgba(128, 164, 224, .22);
+}
+
+.light.mood-light-dreamy {
+  --accent: #da7df0;
+  --accent-2: #79c0ff;
+}
+
+.light.mood-light-dreamy .card {
+  background:
+    radial-gradient(circle at 15% 18%, rgba(255, 196, 241, .4), transparent 30%),
+    radial-gradient(circle at 84% 82%, rgba(176, 228, 255, .34), transparent 34%),
+    linear-gradient(150deg, rgba(255,255,255,.94), rgba(255,238,251,.86));
+}
+
+.light.mood-light-dreamy .rating-row button,
+.light.mood-light-dreamy .controls-row button,
+.light.mood-light-dreamy .simple-rating-row button {
+  background: linear-gradient(145deg, rgba(255, 214, 247, .46), rgba(191, 230, 255, .34));
 }
