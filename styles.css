@@ -200,6 +200,11 @@ body {
     radial-gradient(circle at 50% 120%, var(--fx3), transparent 36%),
     linear-gradient(135deg, var(--bg), var(--bg-2));
   min-height: 100vh;
+  overflow-x: clip;
+}
+
+body.menu-open {
+  overflow: hidden;
 }
 
 body::before {
@@ -282,10 +287,9 @@ body::before {
 #oniModeMenuBtn { border-color: rgba(245, 127, 150, .45); }
 
 .main {
-  width: 100%;
-  max-width: 1320px;
-  margin: 0 auto;
-  padding: 14px;
+  width: min(1320px, 100%);
+  margin-inline: auto;
+  padding: 14px clamp(12px, 2.2vw, 20px);
 }
 
 .topbar {
@@ -578,17 +582,16 @@ th, td {
   .card { min-height: 380px; padding: 20px; border-radius: 20px; }
 }
 
-@media (min-width: 769px) and (max-width: 1400px) {
-  .main { max-width: 100vw; padding: 8px 10px; }
+@media (min-width: 769px) {
   #flashcards.view.active { margin-top: 8px; }
-  .card-panel { min-height: calc(100vh - 92px); padding-bottom: 210px; }
-  .card { min-height: calc(100vh - 258px); }
+  .card-panel { min-height: calc(100vh - 92px); padding-bottom: 220px; }
+  .card { min-height: calc(100vh - 268px); }
 
   .action-dock {
     position: fixed;
-    right: 12px;
-    bottom: 12px;
-    width: min(52vw, 560px);
+    right: 14px;
+    bottom: 14px;
+    width: min(56vw, 620px);
     z-index: 15;
     background: var(--panel-strong);
   }
@@ -598,6 +601,21 @@ th, td {
   .action-dock .simple-rating-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   .action-dock button { min-height: 56px; }
+}
+
+@media (orientation: portrait) {
+  .side-menu {
+    width: min(86vw, 340px);
+    height: 100dvh;
+    padding-top: calc(18px + env(safe-area-inset-top));
+  }
+
+  .main {
+    width: min(1200px, 100%);
+    padding-inline: clamp(10px, 2.8vw, 18px);
+  }
+
+  .table-wrap { max-width: 100%; }
 }
 
 .setting-item {
@@ -1426,4 +1444,67 @@ select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,25
 .light.mood-light-dreamy .controls-row button,
 .light.mood-light-dreamy .simple-rating-row button {
   background: linear-gradient(145deg, rgba(255, 214, 247, .46), rgba(191, 230, 255, .34));
+}
+
+/* Final polish: distinct identity per mode */
+.mood-dark-muted {
+  --fx1: rgba(129, 140, 158, .11);
+  --fx2: rgba(97, 108, 127, .1);
+  --fx3: rgba(67, 78, 98, .09);
+}
+
+.mood-dark-muted .mode-row,
+.mood-dark-muted .card-back .detail,
+.mood-dark-muted .deck-card {
+  background: linear-gradient(145deg, rgba(49, 55, 67, .62), rgba(29, 34, 43, .72));
+  border-color: rgba(156, 169, 191, .2);
+}
+
+.mood-dark-pearl .mode-row,
+.mood-dark-pearl .deck-card,
+.mood-dark-pearl .deck-editor {
+  border-color: rgba(205, 220, 251, .34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 15px 34px rgba(4, 8, 17, .52);
+}
+
+.mood-dark-pearl .card-front {
+  text-shadow: 0 0 22px rgba(193, 214, 255, .3);
+}
+
+.mood-dark-campfire .mode-row,
+.mood-dark-campfire .deck-card,
+.mood-dark-campfire .deck-editor {
+  background: linear-gradient(145deg, rgba(72, 42, 24, .52), rgba(33, 24, 18, .78));
+  border-color: rgba(255, 169, 104, .36);
+}
+
+.mood-dark-campfire button:hover {
+  box-shadow: 0 14px 28px rgba(53, 23, 9, .54), 0 0 0 1px rgba(255, 170, 104, .34);
+}
+
+.light.mood-light-pearl .topbar,
+.light.mood-light-pearl .mode-row,
+.light.mood-light-pearl .deck-editor,
+.light.mood-light-pearl .deck-card {
+  background: linear-gradient(148deg, rgba(255,255,255,.94), rgba(231, 246, 255, .88) 44%, rgba(243, 234, 255, .84));
+}
+
+.light.mood-light-pearl button {
+  background: linear-gradient(145deg, rgba(213, 231, 255, .54), rgba(210, 202, 255, .42));
+  border-color: rgba(112, 156, 230, .34);
+}
+
+.light.mood-light-dreamy .topbar,
+.light.mood-light-dreamy .mode-row,
+.light.mood-light-dreamy .deck-editor,
+.light.mood-light-dreamy .deck-card {
+  background: linear-gradient(148deg, rgba(255,243,253,.94), rgba(233, 247, 255, .88) 44%, rgba(245, 230, 255, .84));
+}
+
+.light.mood-light-dreamy .mode-pill {
+  box-shadow: 0 10px 20px rgba(201, 145, 243, .24), inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.light.mood-light-dreamy .card-back .detail {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 12px 24px rgba(210, 163, 247, .18);
 }
