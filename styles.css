@@ -737,3 +737,7 @@ input[type="checkbox"]:checked::after {
 .setting-emphasis select{font-weight:700;border-width:2px;box-shadow:0 10px 24px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.08);}
 .setting-emphasis span{font-weight:700;}
 select{background:linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.04));}
+
+.mood-hint{margin:8px 2px 0;color:var(--muted);font-size:.9rem;line-height:1.45;letter-spacing:.01em;}
+.setting-emphasis select{border-radius:14px;padding:14px 16px;}
+.setting-emphasis select:focus{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent),0 10px 24px rgba(0,0,0,.18);}
