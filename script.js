@@ -172,6 +172,17 @@ function getThemeFromMood(mood) {
 
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
+function getMoodMeta(mood) {
+  const map = {
+    'dark-muted': '静かな陰影で目に優しい、長時間学習向けのモード。',
+    'dark-pearl': '黒真珠のような上品な艶と、穏やかな光のアクセント。',
+    'dark-campfire': '暗い森と焚き火を思わせる、温かいコントラスト。',
+    'light-pearl': '白真珠の透明感と柔らかな光で、洗練された明るさ。',
+    'light-dreamy': '夢の中のような優しい色調で、可愛くふんわり。'
+  };
+  return map[mood] || map['dark-muted'];
+}
+
 function getPracticeMode() {
   if (state.simpleMode) return 'simple';
   if (state.oniMode) return 'oni';
