@@ -343,18 +343,21 @@ button, select, input {
 
 button {
   cursor: pointer;
-  font-weight: 650;
-  transition: transform .16s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  font-weight: 700;
+  letter-spacing: .01em;
+  transition: transform .16s ease, border-color .24s ease, box-shadow .24s ease, background .24s ease, filter .24s ease;
+  background: linear-gradient(155deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
 }
 
 button:hover {
-  border-color: var(--accent);
-  background: rgba(125, 166, 255, .12);
+  border-color: color-mix(in srgb, var(--accent) 70%, #fff 18%);
+  background: linear-gradient(155deg, rgba(125, 166, 255, .20), rgba(255,255,255,.05));
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(8, 14, 31, .35);
+  box-shadow: 0 12px 26px rgba(8, 14, 31, .42);
+  filter: saturate(1.08);
 }
 
-button:active { transform: translateY(0); }
+button:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(8,14,31,.24); }
 
 .simple-rating-row button {
   font-weight: 800;
@@ -465,9 +468,10 @@ th, td {
 
 .deck-card {
   border: 1px solid var(--line-soft);
-  background: var(--panel);
-  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+  border-radius: 16px;
   padding: 12px;
+  backdrop-filter: blur(10px);
 }
 
 .deck-card.active {
@@ -481,14 +485,20 @@ th, td {
 .deck-card-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  gap: 8px;
+}
+
+.deck-card-actions button {
+  min-height: 42px;
+  font-size: .9rem;
 }
 
 .deck-editor {
   border: 1px solid var(--line-soft);
-  background: var(--panel);
-  border-radius: 16px;
-  padding: 12px;
+  background: linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 
 .deck-editor h3 { margin-top: 0; }
@@ -517,4 +527,17 @@ button.danger:hover {
   .editor-add-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+.section-lead {
+  color: var(--muted);
+  margin: 6px 0 12px;
+  font-size: .96rem;
+}
+
+.emoji-showcase {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1.1;
+  margin-top: 2px;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.35));
 }

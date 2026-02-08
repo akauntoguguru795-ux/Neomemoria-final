@@ -182,9 +182,19 @@ function getCardsByDeckId(deckId) {
 }
 
 function refreshDeckSelect() {
+  const prev = els.importDeckSelect.value;
   const opts = [`<option value="__new__">新規単語帳を作成してインポート</option>`]
     .concat(state.decks.map(d => `<option value="${d.id}">${escapeHtml(d.name)}（${getCardsByDeckId(d.id).length}語）</option>`));
   els.importDeckSelect.innerHTML = opts.join('');
+
+  if (prev && [...els.importDeckSelect.options].some(o => o.value === prev)) {
+    els.importDeckSelect.value = prev;
+  } else if (state.decks.length) {
+    els.importDeckSelect.value = state.decks[0].id;
+  } else {
+    els.importDeckSelect.value = '__new__';
+  }
+
   els.newDeckNameWrap.classList.toggle('hidden', els.importDeckSelect.value !== '__new__');
 }
 
@@ -549,7 +559,7 @@ function renderCard() {
       ? `
         <div class="detail"><span class="label">例文</span>${escapeHtml(c.example || '-')}</div>
         <div class="detail"><span class="label">例文の和訳</span>${escapeHtml(c.exampleJa || '-')}</div>
-        <div class="detail"><span class="label">絵文字</span>${escapeHtml(c.emoji || '-')}</div>
+        <div class="emoji-showcase" aria-label="絵文字">${escapeHtml(c.emoji || '-')}</div>
       `
       : '<div class="detail">...</div>';
   }
@@ -614,7 +624,7 @@ function renderDeck() {
   if (!state.decks.length) {
     activeDeckId = null;
     els.deckManagerList.innerHTML = '<p>単語帳がありません。インポートで作成してください。</p>';
-    els.deckEditorTitle.textContent = '単語帳編集';
+    els.deckEditorTitle.textContent = '単語帳編集（単語帳を選択してください）';
     els.deckTableWrap.innerHTML = '<p>編集対象の単語帳がありません。</p>';
     return;
   }
@@ -682,7 +692,7 @@ function renderDeck() {
 function renderDeckEditor() {
   const deck = getDeckById(activeDeckId);
   if (!deck) {
-    els.deckEditorTitle.textContent = '単語帳編集';
+    els.deckEditorTitle.textContent = '単語帳編集（単語帳を選択してください）';
     els.deckTableWrap.innerHTML = '<p>編集対象の単語帳がありません。</p>';
     return;
   }
@@ -691,7 +701,7 @@ function renderDeckEditor() {
   const cards = getCardsByDeckId(deck.id)
     .filter(c => !q || [c.word, c.meaning, c.example, c.exampleJa, c.emoji].some(v => normalize(v || '').includes(q)));
 
-  els.deckEditorTitle.textContent = `単語帳編集: ${deck.name}`;
+  els.deckEditorTitle.textContent = `単語帳編集: ${deck.name}（選択中）`;
 
   const rows = cards.map(c => `
     <tr>
