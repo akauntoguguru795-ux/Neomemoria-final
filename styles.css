@@ -589,16 +589,17 @@ th, td {
   }
 
   #flashcards .card-panel {
-  min-height: calc(100dvh - 104px);
-  padding-bottom: clamp(250px, 36vh, 380px);
+  min-height: calc(100dvh - 86px);
+  padding-bottom: clamp(270px, 38vh, 420px);
 }
 
   .action-dock {
   position: fixed;
-  right: max(10px, env(safe-area-inset-right));
-  bottom: max(10px, env(safe-area-inset-bottom));
+  left: auto;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
   width: min(92vw, 560px);
-  max-height: calc(100dvh - 86px);
+  max-height: calc(100dvh - 96px);
   overflow: auto;
   z-index: 20;
   background: var(--panel-strong);
