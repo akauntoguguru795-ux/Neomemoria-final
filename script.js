@@ -54,6 +54,7 @@ const els = {
   oniToggle: document.getElementById('oniModeToggle'),
   simpleModeToggle: document.getElementById('simpleModeToggle'),
   uiMoodSelect: document.getElementById('uiMoodSelect'),
+  uiMoodHint: document.getElementById('uiMoodHint'),
   oniBox: document.getElementById('oniModeBox'),
   oniInput: document.getElementById('oniInput'),
   oniCheckBtn: document.getElementById('oniCheckBtn'),
