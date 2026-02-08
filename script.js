@@ -546,7 +546,9 @@ function renderAll() {
   refreshDeckSelect();
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
-  els.uiMoodSelect.value = normalizeMood(state.uiMood, state.theme);
+  const mood = normalizeMood(state.uiMood, state.theme);
+  els.uiMoodSelect.value = mood;
+  els.uiMoodHint.textContent = getMoodMeta(mood);
   syncModeToggles();
   syncActionDock();
   els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
