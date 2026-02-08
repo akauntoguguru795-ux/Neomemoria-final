@@ -4,6 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Neomemoria Flashcards</title>
+  <script>
+    (function(){
+      try {
+        var raw = localStorage.getItem('neomemoria-state-v1');
+        if (!raw) return;
+        var st = JSON.parse(raw);
+        if (st && st.theme === 'light') document.documentElement.classList.add('light');
+        document.documentElement.classList.add((st && st.designVariant === 'avant') ? 'variant-avant' : 'variant-pearl');
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -12,8 +23,11 @@
     <aside id="sideMenu" class="side-menu" aria-hidden="true">
       <h2>Neomemoria</h2>
       <button data-view="flashcards">フラッシュカード</button>
+      <button id="normalModeMenuBtn" data-action="normal-mode">ノーマルフラッシュカードを開始</button>
+      <button id="simpleModeMenuBtn" data-action="simple-mode">シンプルフラッシュカードを開始</button>
+      <button id="oniModeMenuBtn" data-action="oni-mode">鬼モードを開始</button>
       <button data-view="import">インポート</button>
-      <button data-view="deck">単語帳一覧</button>
+      <button data-view="deck">単語帳管理</button>
       <button data-view="stats">統計情報</button>
       <button data-view="settings">設定</button>
     </aside>
@@ -29,6 +43,7 @@
         <div class="card-panel">
           <div class="mode-row">
             <span id="sessionInfo"></span>
+            <span id="modeInfo" class="mode-pill"></span>
             <span id="queueInfo"></span>
           </div>
           <button id="card" class="card" type="button">
@@ -66,17 +81,46 @@
 
       <section id="import" class="view">
         <h2>CSV / テキスト インポート</h2>
-        <p>1ファイル上限: 3000語（ファイル数無制限）</p>
+        <p>1ファイル上限: 3000語。複数ファイルを一度に同じ単語帳へ追加できます。</p>
+
+        <label class="setting-item">
+          <span>取り込み先</span>
+          <select id="importDeckSelect"></select>
+        </label>
+
+        <label class="setting-item" id="newDeckNameWrap">
+          <span>新規単語帳名（新規作成時）</span>
+          <input id="deckNameInput" type="text" placeholder="例: TOEIC Day1" maxlength="60" />
+        </label>
+
         <input id="fileInput" type="file" accept=".csv,.txt" multiple />
         <button id="importBtn" type="button">インポート実行</button>
         <p id="importStatus"></p>
-        <h3>検出カラム一覧</h3>
+        <h3>単語帳一覧（インポート済み）</h3>
         <div id="columnsList" class="card-list"></div>
       </section>
 
       <section id="deck" class="view">
-        <h2>単語帳一覧（全カード）</h2>
-        <div id="deckTableWrap" class="table-wrap"></div>
+        <h2>単語帳管理</h2>
+        <p class="deck-guide">まず単語帳一覧から1つ選択して編集します。</p>
+        <div id="deckManagerList" class="deck-manager-list"></div>
+
+        <article class="deck-editor hidden" id="deckEditor">
+          <h3 id="deckEditorTitle">単語帳編集</h3>
+          <div class="editor-toolbar">
+            <input id="deckSearchInput" type="text" placeholder="この単語帳内を検索（単語/意味/例文）" />
+          </div>
+          <div class="editor-add-row">
+            <input id="addNoInput" type="text" placeholder="No" />
+            <input id="addWordInput" type="text" placeholder="単語 *" />
+            <input id="addMeaningInput" type="text" placeholder="意味 *" />
+            <input id="addExampleInput" type="text" placeholder="例文" />
+            <input id="addExampleJaInput" type="text" placeholder="例文の和訳" />
+            <input id="addEmojiInput" type="text" placeholder="絵文字" />
+            <button id="addWordBtn" type="button">単語を追加</button>
+          </div>
+          <div id="deckTableWrap" class="table-wrap"></div>
+        </article>
       </section>
 
       <section id="stats" class="view">
@@ -107,6 +151,13 @@
         <label class="setting-item">
           <span>シンプルフラッシュカード（表:英単語 / 裏:意味）</span>
           <input id="simpleModeToggle" type="checkbox" />
+        </label>
+        <label class="setting-item">
+          <span>デザインUI（2バージョン）</span>
+          <select id="designVariantSelect">
+            <option value="pearl">Pearl Signature（既存コンセプト深化）</option>
+            <option value="avant">Avant Aura（大胆リデザイン）</option>
+          </select>
         </label>
       </section>
     </main>

@@ -2,7 +2,7 @@ const STORAGE_KEY = 'neomemoria-state-v1';
 const MAX_WORDS_PER_FILE = 3000;
 const DAY = 24 * 60 * 60 * 1000;
 
-const state = loadState();
+const state = normalizeState(loadState());
 let currentQueue = [];
 let currentIndex = 0;
 let showingBack = false;
@@ -10,6 +10,7 @@ let historyStack = [];
 let sessionStart = Date.now();
 let sessionSeconds = 0;
 let sessionInterval;
+let activeDeckId = null;
 
 const els = {
   sideMenu: document.getElementById('sideMenu'),
@@ -23,10 +24,25 @@ const els = {
   undoBtn: document.getElementById('undoBtn'),
   sessionInfo: document.getElementById('sessionInfo'),
   queueInfo: document.getElementById('queueInfo'),
+  modeInfo: document.getElementById('modeInfo'),
   fileInput: document.getElementById('fileInput'),
   importBtn: document.getElementById('importBtn'),
   importStatus: document.getElementById('importStatus'),
+  importDeckSelect: document.getElementById('importDeckSelect'),
+  deckNameInput: document.getElementById('deckNameInput'),
+  newDeckNameWrap: document.getElementById('newDeckNameWrap'),
   columnsList: document.getElementById('columnsList'),
+  deckManagerList: document.getElementById('deckManagerList'),
+  deckEditor: document.getElementById('deckEditor'),
+  deckEditorTitle: document.getElementById('deckEditorTitle'),
+  deckSearchInput: document.getElementById('deckSearchInput'),
+  addNoInput: document.getElementById('addNoInput'),
+  addWordInput: document.getElementById('addWordInput'),
+  addMeaningInput: document.getElementById('addMeaningInput'),
+  addExampleInput: document.getElementById('addExampleInput'),
+  addExampleJaInput: document.getElementById('addExampleJaInput'),
+  addEmojiInput: document.getElementById('addEmojiInput'),
+  addWordBtn: document.getElementById('addWordBtn'),
   deckTableWrap: document.getElementById('deckTableWrap'),
   streakBadge: document.getElementById('streakBadge'),
   accuracyStat: document.getElementById('accuracyStat'),
@@ -37,12 +53,15 @@ const els = {
   themeSelect: document.getElementById('themeSelect'),
   oniToggle: document.getElementById('oniModeToggle'),
   simpleModeToggle: document.getElementById('simpleModeToggle'),
+  designVariantSelect: document.getElementById('designVariantSelect'),
   oniBox: document.getElementById('oniModeBox'),
   oniInput: document.getElementById('oniInput'),
   oniCheckBtn: document.getElementById('oniCheckBtn'),
   oniResult: document.getElementById('oniResult'),
+  actionDock: document.querySelector('.action-dock'),
   ratingRow: document.querySelector('.rating-row'),
-  simpleRatingRow: document.getElementById('simpleRatingRow')
+  simpleRatingRow: document.getElementById('simpleRatingRow'),
+  controlsRow: document.querySelector('.controls-row')
 };
 
 wire();
@@ -55,9 +74,11 @@ function loadState() {
   if (raw) return JSON.parse(raw);
   return {
     cards: [],
+    decks: [],
     files: [],
     mode: 'random',
     theme: 'dark',
+    designVariant: 'pearl',
     oniMode: false,
     simpleMode: false,
     stats: {
@@ -70,13 +91,134 @@ function loadState() {
     }
   };
 }
+
+function normalizeState(raw) {
+  const s = {
+    cards: Array.isArray(raw.cards) ? raw.cards : [],
+    decks: Array.isArray(raw.decks) ? raw.decks : [],
+    files: Array.isArray(raw.files) ? raw.files : [],
+    mode: raw.mode || 'random',
+    theme: raw.theme || 'dark',
+    designVariant: raw.designVariant === 'avant' ? 'avant' : 'pearl',
+    oniMode: !!raw.oniMode,
+    simpleMode: !!raw.simpleMode,
+    stats: raw.stats || {
+      totalAnswers: 0,
+      correctLike: 0,
+      daily: {},
+      lastStudyDate: null,
+      streak: 0,
+      totalSeconds: 0
+    }
+  };
+
+  if (!Array.isArray(s.stats.daily)) s.stats.daily = s.stats.daily || {};
+
+  if (!s.decks.length) {
+    const sourceMap = new Map();
+    for (const file of s.files) {
+      const id = crypto.randomUUID();
+      sourceMap.set(file.name, id);
+      s.decks.push({ id, name: file.name, createdAt: file.importedAt || Date.now(), updatedAt: Date.now() });
+    }
+    if (!s.decks.length && s.cards.length) {
+      const id = crypto.randomUUID();
+      s.decks.push({ id, name: 'メイン単語帳', createdAt: Date.now(), updatedAt: Date.now() });
+      sourceMap.set('default', id);
+    }
+    s.cards.forEach(card => {
+      if (!card.deckId) card.deckId = sourceMap.get(card.source) || sourceMap.get('default') || s.decks[0]?.id || null;
+    });
+  }
+
+  s.cards = s.cards.map((card, i) => ({
+    id: card.id || crypto.randomUUID(),
+    no: card.no || String(i + 1),
+    word: card.word || '',
+    meaning: card.meaning || '',
+    example: card.example || '',
+    exampleJa: card.exampleJa || '',
+    emoji: card.emoji || '',
+    source: card.source || '-',
+    deckId: card.deckId || s.decks[0]?.id || null,
+    initialReviewed: !!card.initialReviewed,
+    status: card.status || 'new',
+    dueAt: Number.isFinite(card.dueAt) ? card.dueAt : Date.now(),
+    mastered: !!card.mastered,
+    forgotRequeue: card.forgotRequeue || null,
+    history: Array.isArray(card.history) ? card.history : []
+  })).filter(c => c.word && c.meaning && c.deckId);
+
+  s.decks = s.decks.map(d => ({
+    id: d.id || crypto.randomUUID(),
+    name: d.name || '名称未設定',
+    createdAt: d.createdAt || Date.now(),
+    updatedAt: d.updatedAt || Date.now()
+  }));
+
+  return s;
+}
+
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function getPracticeMode() {
+  if (state.simpleMode) return 'simple';
+  if (state.oniMode) return 'oni';
+  return 'normal';
+}
+
+function setPracticeMode(mode) {
+  state.simpleMode = mode === 'simple';
+  state.oniMode = mode === 'oni';
+  saveState();
+  syncModeToggles();
+  switchView('flashcards');
+  resetQueue();
+  renderAll();
+}
+
+function getDeckById(id) {
+  return state.decks.find(d => d.id === id) || null;
+}
+
+function getCardsByDeckId(deckId) {
+  return state.cards.filter(c => c.deckId === deckId);
+}
+
+function refreshDeckSelect() {
+  const prev = els.importDeckSelect.value || '__new__';
+  const opts = [`<option value="__new__">新規単語帳を作成してインポート</option>`]
+    .concat(state.decks.map(d => `<option value="${d.id}">${escapeHtml(d.name)}（${getCardsByDeckId(d.id).length}語）</option>`));
+  els.importDeckSelect.innerHTML = opts.join('');
+  els.importDeckSelect.value = state.decks.some(d => d.id === prev) || prev === '__new__' ? prev : '__new__';
+  els.newDeckNameWrap.classList.toggle('hidden', els.importDeckSelect.value !== '__new__');
+}
+
+function touchDeck(deckId) {
+  const deck = getDeckById(deckId);
+  if (deck) deck.updatedAt = Date.now();
+}
 
 function wire() {
   els.menuBtn.onclick = toggleMenu;
   els.menuBackdrop.onclick = closeMenu;
   els.sideMenu.querySelectorAll('button').forEach(btn => {
     btn.onclick = () => {
+      if (btn.dataset.action === 'simple-mode') {
+        setPracticeMode('simple');
+        closeMenu();
+        return;
+      }
+      if (btn.dataset.action === 'normal-mode') {
+        setPracticeMode('normal');
+        closeMenu();
+        return;
+      }
+      if (btn.dataset.action === 'oni-mode') {
+        setPracticeMode('oni');
+        closeMenu();
+        return;
+      }
       switchView(btn.dataset.view);
       closeMenu();
     };
@@ -109,33 +251,72 @@ function wire() {
 
   els.undoBtn.onclick = undoLastRating;
 
+  els.importDeckSelect.onchange = () => {
+    els.newDeckNameWrap.classList.toggle('hidden', els.importDeckSelect.value !== '__new__');
+  };
+
   els.importBtn.onclick = async () => {
     const files = [...els.fileInput.files];
-    if (!files.length) return;
+    if (!files.length) {
+      els.importStatus.textContent = 'ファイルを選択してください。';
+      return;
+    }
+
+    let deckId = els.importDeckSelect.value;
+    if (deckId === '__new__') {
+      const deckName = els.deckNameInput.value.trim();
+      if (!deckName) {
+        els.importStatus.textContent = '新規単語帳名を入力してください。';
+        return;
+      }
+      const duplicated = state.decks.some(d => d.name === deckName);
+      if (duplicated) {
+        els.importStatus.textContent = '同名の単語帳があります。別名を入力してください。';
+        return;
+      }
+      deckId = crypto.randomUUID();
+      state.decks.push({ id: deckId, name: deckName, createdAt: Date.now(), updatedAt: Date.now() });
+    }
+
+    const deck = getDeckById(deckId);
+    if (!deck) {
+      els.importStatus.textContent = '取り込み先単語帳が見つかりません。';
+      return;
+    }
+
     let imported = 0;
-    const columnsByFile = [];
+    let skipped = 0;
+
     for (const file of files) {
       const text = await file.text();
       const rows = parseCSVorText(text);
       if (!rows.length) continue;
       const header = rows[0].map(x => x.trim());
       const body = rows.slice(1);
+
       if (body.length > MAX_WORDS_PER_FILE) {
-        els.importStatus.textContent = `${file.name}: 3000語を超えたためスキップ`;
+        skipped += 1;
         continue;
       }
-      const mapped = mapRows(body, header, file.name);
-      state.cards.push(...mapped);
-      state.files.push({ name: file.name, columns: header, importedAt: Date.now(), count: mapped.length });
-      columnsByFile.push(`${file.name}: ${header.join(' / ')}`);
+
+      const mapped = mapRows(body, header, file.name, deckId);
       imported += mapped.length;
+      state.cards.push(...mapped);
     }
+
+    touchDeck(deckId);
     saveState();
     resetQueue();
     renderAll();
-    els.importStatus.textContent = `インポート完了: ${imported}語`;
-    els.columnsList.innerHTML = columnsByFile.map(c => `<p>${escapeHtml(c)}</p>`).join('') || '<p>新規なし</p>';
+
+    els.importStatus.textContent = `インポート完了: ${imported}語（スキップ: ${skipped}件） / 単語帳: ${deck.name}`;
+    els.fileInput.value = '';
+    els.deckNameInput.value = '';
+    refreshDeckSelect();
   };
+
+  els.addWordBtn.onclick = addWordToActiveDeck;
+  els.deckSearchInput.oninput = renderDeckEditor;
 
   els.themeSelect.onchange = () => {
     state.theme = els.themeSelect.value;
@@ -143,20 +324,22 @@ function wire() {
     applyTheme();
   };
 
-  els.oniToggle.onchange = () => {
-    state.oniMode = els.oniToggle.checked;
-    if (state.oniMode) state.simpleMode = false;
+  els.designVariantSelect.onchange = () => {
+    state.designVariant = els.designVariantSelect.value === 'avant' ? 'avant' : 'pearl';
     saveState();
-    syncModeToggles();
-    renderCard();
+    applyTheme();
+  };
+
+  els.oniToggle.onchange = () => {
+    if (els.oniToggle.checked) setPracticeMode('oni');
+    else if (els.simpleModeToggle.checked) setPracticeMode('simple');
+    else setPracticeMode('normal');
   };
 
   els.simpleModeToggle.onchange = () => {
-    state.simpleMode = els.simpleModeToggle.checked;
-    if (state.simpleMode) state.oniMode = false;
-    saveState();
-    syncModeToggles();
-    renderAll();
+    if (els.simpleModeToggle.checked) setPracticeMode('simple');
+    else if (els.oniToggle.checked) setPracticeMode('oni');
+    else setPracticeMode('normal');
   };
 
   document.querySelectorAll('[data-simple-rating]').forEach(btn => {
@@ -175,6 +358,51 @@ function wire() {
   };
 
   sessionInterval = setInterval(() => { sessionSeconds += 1; }, 1000);
+}
+
+function addWordToActiveDeck() {
+  if (!activeDeckId || !getDeckById(activeDeckId)) {
+    alert('先に単語帳を選択してください。');
+    return;
+  }
+
+  const word = els.addWordInput.value.trim();
+  const meaning = els.addMeaningInput.value.trim();
+  if (!word || !meaning) {
+    alert('単語と意味は必須です。');
+    return;
+  }
+
+  const card = {
+    id: crypto.randomUUID(),
+    no: els.addNoInput.value.trim() || String(getCardsByDeckId(activeDeckId).length + 1),
+    word,
+    meaning,
+    example: els.addExampleInput.value.trim(),
+    exampleJa: els.addExampleJaInput.value.trim(),
+    emoji: els.addEmojiInput.value.trim(),
+    source: getDeckById(activeDeckId)?.name || '-',
+    deckId: activeDeckId,
+    initialReviewed: false,
+    status: 'new',
+    dueAt: Date.now(),
+    mastered: false,
+    forgotRequeue: null,
+    history: []
+  };
+
+  state.cards.push(card);
+  touchDeck(activeDeckId);
+  saveState();
+  resetQueue();
+  renderAll();
+
+  els.addNoInput.value = '';
+  els.addWordInput.value = '';
+  els.addMeaningInput.value = '';
+  els.addExampleInput.value = '';
+  els.addExampleJaInput.value = '';
+  els.addEmojiInput.value = '';
 }
 
 function toggleMenu() {
@@ -202,9 +430,11 @@ function parseCSVorText(text) {
   const lines = text.split(/\r?\n/).filter(Boolean);
   return lines.map(parseCSVLine);
 }
+
 function parseCSVLine(line) {
   const out = [];
-  let cur = '', inQ = false;
+  let cur = '';
+  let inQ = false;
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
     if (ch === '"') {
@@ -217,18 +447,26 @@ function parseCSVLine(line) {
   out.push(cur);
   return out;
 }
-function mapRows(rows, header, source) {
+
+function mapRows(rows, header, source, deckId) {
   const idx = key => header.findIndex(h => h.trim().toLowerCase() === key);
-  const iNo = idx('no'), iWord = idx('単語'), iMeaning = idx('意味'), iEx = idx('例文'), iExJa = idx('例文の和訳'), iEm = idx('絵文字');
+  const iNo = idx('no');
+  const iWord = idx('単語');
+  const iMeaning = idx('意味');
+  const iEx = idx('例文');
+  const iExJa = idx('例文の和訳');
+  const iEm = idx('絵文字');
+
   return rows.map((r, i) => ({
     id: crypto.randomUUID(),
-    no: r[iNo] || String(state.cards.length + i + 1),
+    no: r[iNo] || String(getCardsByDeckId(deckId).length + i + 1),
     word: r[iWord] || r[1] || '',
     meaning: r[iMeaning] || r[2] || '',
     example: r[iEx] || r[3] || '',
     exampleJa: r[iExJa] || r[4] || '',
     emoji: r[iEm] || r[5] || '',
     source,
+    deckId,
     initialReviewed: false,
     status: 'new',
     dueAt: Date.now(),
@@ -249,24 +487,43 @@ function resetQueue() {
     currentQueue = shuffle([...pendingInitial]);
     state.mode = 'random';
   } else {
-    let due = state.cards.filter(c => !c.mastered && c.dueAt <= now);
-    due.sort((a, b) => a.dueAt - b.dueAt);
+    const due = state.cards.filter(c => !c.mastered && c.dueAt <= now).sort((a, b) => a.dueAt - b.dueAt);
     currentQueue = state.mode === 'random' ? shuffle(due) : due;
   }
   currentIndex = 0;
   showingBack = false;
 }
 
+function getCurrentModeLabel() {
+  const mode = getPracticeMode();
+  if (mode === 'simple') return 'シンプルフラッシュカード';
+  if (mode === 'oni') return '鬼モード';
+  return 'ノーマルフラッシュカード';
+}
+
+function syncActionDock() {
+  const simple = !!state.simpleMode;
+  els.actionDock.classList.toggle('simple-only', simple);
+  els.controlsRow.classList.toggle('hidden', simple);
+  els.ratingRow.classList.toggle('hidden', simple);
+  els.simpleRatingRow.classList.toggle('hidden', !simple);
+  els.controlsRow.style.display = simple ? 'none' : '';
+  els.ratingRow.style.display = simple ? 'none' : '';
+  els.simpleRatingRow.style.display = simple ? 'grid' : 'none';
+}
+
 function renderAll() {
   renderCard();
   renderDeck();
   renderStats();
+  refreshDeckSelect();
   els.modeBtn.textContent = hasPendingInitialReview() ? '出題: 初回ランダム' : `出題: ${state.mode === 'random' ? 'ランダム' : '番号順'}`;
   els.themeSelect.value = state.theme;
+  els.designVariantSelect.value = state.designVariant;
   syncModeToggles();
-  els.ratingRow.classList.toggle('hidden', state.simpleMode);
-  els.simpleRatingRow.classList.toggle('hidden', !state.simpleMode);
-  els.columnsList.innerHTML = state.files.map(f => `<p>${escapeHtml(f.name)}: ${escapeHtml(f.columns.join(' / '))}</p>`).join('') || '<p>未インポート</p>';
+  syncActionDock();
+  els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
+  els.columnsList.innerHTML = state.decks.map(d => `<p>${escapeHtml(d.name)}: ${getCardsByDeckId(d.id).length}語</p>`).join('') || '<p>未インポート</p>';
 }
 
 function syncModeToggles() {
@@ -283,31 +540,37 @@ function renderCard() {
     els.back.innerHTML = '<div class="detail">新しい単語をインポートするか、期限到来を待ってください。</div>';
     els.sessionInfo.textContent = `総カード: ${state.cards.length}`;
     els.queueInfo.textContent = 'キュー: 0';
+    els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
     els.oniBox.classList.add('hidden');
     return;
   }
-  const isSimple = !!state.simpleMode;
-  const prompt = state.oniMode ? `${c.meaning} ${c.emoji || ''}` : `${c.word} ${c.emoji || ''}`;
-  const main = state.oniMode ? c.word : c.meaning;
-  const mainLabel = state.oniMode ? '英単語' : '意味';
 
-  els.front.textContent = prompt;
-  if (isSimple) {
+  const mode = getPracticeMode();
+  if (mode === 'simple') {
+    els.front.textContent = `${c.word} ${c.emoji || ''}`;
     els.back.innerHTML = showingBack
       ? `<div class="meaning"><span class="label">意味</span>${escapeHtml(c.meaning || '-')}</div>`
       : '<div class="detail">...</div>';
+  } else if (mode === 'oni') {
+    els.front.textContent = `${c.meaning} ${c.emoji || ''}`;
+    els.back.innerHTML = showingBack
+      ? '<div class="detail"><span class="label">入力欄でスペルを回答してください</span>答えは入力してから「答え合わせ」で確認</div>'
+      : '<div class="detail">スペルを入力して答え合わせ</div>';
   } else {
+    els.front.textContent = `No.${escapeHtml(c.no)}  ${c.word}`;
     els.back.innerHTML = showingBack
       ? `
-        <div class="meaning"><span class="label">${mainLabel}</span>${escapeHtml(main || '-')}</div>
         <div class="detail"><span class="label">例文</span>${escapeHtml(c.example || '-')}</div>
         <div class="detail"><span class="label">例文の和訳</span>${escapeHtml(c.exampleJa || '-')}</div>
+        <div class="emoji-display" aria-label="emoji">${escapeHtml(c.emoji || '✨')}</div>
       `
       : '<div class="detail">...</div>';
   }
-  els.sessionInfo.textContent = `No.${c.no} / ${c.source}`;
+
+  els.sessionInfo.textContent = `No.${c.no} / ${getDeckById(c.deckId)?.name || c.source}`;
   els.queueInfo.textContent = `キュー残: ${Math.max(0, currentQueue.length - currentIndex)}`;
-  els.oniBox.classList.toggle('hidden', !state.oniMode || !showingBack || state.simpleMode);
+  els.modeInfo.textContent = `モード: ${getCurrentModeLabel()}`;
+  els.oniBox.classList.toggle('hidden', getPracticeMode() !== 'oni');
   els.oniResult.textContent = '';
   els.oniInput.value = '';
 }
@@ -345,8 +608,7 @@ function rateCard(rating) {
 
 function scheduleForgotRequeue(card) {
   const insertAt = Math.min(currentQueue.length, currentIndex + 21);
-  const clone = card;
-  currentQueue.splice(insertAt, 0, clone);
+  currentQueue.splice(insertAt, 0, card);
 }
 
 function undoLastRating() {
@@ -362,19 +624,111 @@ function undoLastRating() {
 }
 
 function renderDeck() {
-  const rows = state.cards.map(c => `<tr>
-    <td>${escapeHtml(c.no)}</td><td>${escapeHtml(c.word)}</td><td>${escapeHtml(c.meaning)}</td>
-    <td>${escapeHtml(c.status)}</td><td>${c.mastered ? '✅' : ''}</td><td>${formatDate(c.dueAt)}</td>
-    <td><button data-restore="${c.id}">未習得に戻す</button></td>
-  </tr>`).join('');
-  els.deckTableWrap.innerHTML = `<table><thead><tr><th>No</th><th>単語</th><th>意味</th><th>状態</th><th>完全習得</th><th>次回</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>`;
-  els.deckTableWrap.querySelectorAll('button[data-restore]').forEach(btn => {
+  if (!state.decks.length) {
+    activeDeckId = null;
+    els.deckManagerList.innerHTML = '<p>単語帳がありません。インポートで作成してください。</p>';
+    els.deckEditorTitle.textContent = '単語帳編集';
+    els.deckTableWrap.innerHTML = '<p>一覧から単語帳を選択してください。</p>';
+    return;
+  }
+
+  if (activeDeckId && !getDeckById(activeDeckId)) activeDeckId = null;
+
+  const cards = state.decks.map(deck => {
+    const count = getCardsByDeckId(deck.id).length;
+    return `
+      <article class="deck-card ${deck.id === activeDeckId ? 'active' : ''}">
+        <h4>${escapeHtml(deck.name)}</h4>
+        <p>${count}語</p>
+        <div class="deck-card-actions">
+          <button data-open-deck="${deck.id}">${deck.id === activeDeckId ? '編集中' : 'この単語帳を編集'}</button>
+          <button data-rename-deck="${deck.id}">名前変更</button>
+          <button data-delete-deck="${deck.id}" class="danger">削除</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  els.deckManagerList.innerHTML = cards;
+
+  els.deckManagerList.querySelectorAll('[data-open-deck]').forEach(btn => {
     btn.onclick = () => {
-      const c = state.cards.find(x => x.id === btn.dataset.restore);
-      if (!c) return;
-      c.mastered = false;
-      c.status = 'unsure';
-      c.dueAt = Date.now();
+      activeDeckId = btn.dataset.openDeck;
+      renderDeck();
+    };
+  });
+
+  els.deckManagerList.querySelectorAll('[data-rename-deck]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.renameDeck;
+      const deck = getDeckById(id);
+      if (!deck) return;
+      const next = prompt('単語帳名を入力してください', deck.name);
+      if (!next) return;
+      const trimmed = next.trim();
+      if (!trimmed) return;
+      deck.name = trimmed;
+      touchDeck(id);
+      saveState();
+      renderAll();
+    };
+  });
+
+  els.deckManagerList.querySelectorAll('[data-delete-deck]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.deleteDeck;
+      const deck = getDeckById(id);
+      if (!deck) return;
+      if (!confirm(`「${deck.name}」を削除します。カードもすべて削除されます。`)) return;
+      state.cards = state.cards.filter(c => c.deckId !== id);
+      state.decks = state.decks.filter(d => d.id !== id);
+      if (activeDeckId === id) activeDeckId = state.decks[0]?.id || null;
+      saveState();
+      resetQueue();
+      renderAll();
+    };
+  });
+
+  els.deckEditor.classList.toggle('hidden', !activeDeckId);
+  renderDeckEditor();
+}
+
+function renderDeckEditor() {
+  const deck = getDeckById(activeDeckId);
+  if (!deck) {
+    els.deckEditorTitle.textContent = '単語帳編集';
+    els.deckTableWrap.innerHTML = '<p>一覧から単語帳を選択してください。</p>';
+    return;
+  }
+
+  const q = normalize(els.deckSearchInput.value || '');
+  const cards = getCardsByDeckId(deck.id)
+    .filter(c => !q || [c.word, c.meaning, c.example, c.exampleJa, c.emoji].some(v => normalize(v || '').includes(q)));
+
+  els.deckEditorTitle.textContent = `単語帳編集: ${deck.name}`;
+
+  const rows = cards.map(c => `
+    <tr>
+      <td>${escapeHtml(c.no)}</td>
+      <td>${escapeHtml(c.word)}</td>
+      <td>${escapeHtml(c.meaning)}</td>
+      <td>${escapeHtml(c.example || '-')}</td>
+      <td>${escapeHtml(c.exampleJa || '-')}</td>
+      <td>${escapeHtml(c.emoji || '-')}</td>
+      <td><button data-delete-word="${c.id}" class="danger">削除</button></td>
+    </tr>
+  `).join('');
+
+  els.deckTableWrap.innerHTML = `<table>
+    <thead><tr><th>No</th><th>単語</th><th>意味</th><th>例文</th><th>例文の和訳</th><th>絵文字</th><th>操作</th></tr></thead>
+    <tbody>${rows || '<tr><td colspan="7">データなし</td></tr>'}</tbody>
+  </table>`;
+
+  els.deckTableWrap.querySelectorAll('[data-delete-word]').forEach(btn => {
+    btn.onclick = () => {
+      const cardId = btn.dataset.deleteWord;
+      state.cards = state.cards.filter(c => c.id !== cardId);
+      touchDeck(activeDeckId);
       saveState();
       resetQueue();
       renderAll();
@@ -433,7 +787,12 @@ function streakEffect(streak) {
 }
 
 function applyTheme() {
-  document.documentElement.classList.toggle('light', state.theme === 'light');
+  const root = document.documentElement;
+  root.classList.add('theme-switching');
+  root.classList.toggle('light', state.theme === 'light');
+  root.classList.remove('variant-pearl', 'variant-avant');
+  root.classList.add(state.designVariant === 'avant' ? 'variant-avant' : 'variant-pearl');
+  requestAnimationFrame(() => root.classList.remove('theme-switching'));
 }
 
 function shuffle(arr) {
@@ -444,6 +803,5 @@ function shuffle(arr) {
   return arr;
 }
 
-function normalize(v) { return v.trim().toLowerCase(); }
+function normalize(v) { return String(v || '').trim().toLowerCase(); }
 function escapeHtml(v) { return String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
-function formatDate(ts) { return ts > 9e15 ? '表示なし(習得済み)' : new Date(ts).toLocaleString(); }
